@@ -406,10 +406,10 @@
     <div id="sheetHandle"><div class="grab"></div><div class="hint"></div></div>
     <div id="panelHead">
       <div class="brand"><span class="flag">🇪🇸</span>
-        <div><h1>Andalucía 2026</h1><div class="sub">Viaje familiar · 2–15 oct · bucle desde Madrid</div></div></div>
+        <div><h1>Andalucía 2026</h1><div class="sub">Viaje familiar · 2–15 oct · bucle desde Sevilla</div></div></div>
       <div class="stats">
         <span class="stat"><b>13</b> noches</span><span class="stat"><b>6</b> bases</span>
-        <span class="stat"><b>8</b> viajeros</span><span class="stat"><b>~20 h</b> de traslados</span></div>
+        <span class="stat"><b>8</b> viajeros</span><span class="stat"><b>~14 h</b> de traslados</span></div>
       <div class="seg" id="seg">
         <button data-view="agenda" class="on">📅 Agenda</button>
         <button data-view="map">🗺️ Bases</button></div>
@@ -442,31 +442,36 @@ function copyTxt(txt,msg){
 
 /* ============ Datos ============ */
 const BASES = {
+  sevilla:{name:'Sevilla',color:'#fb7185',nights:3,lat:37.3891,lng:-5.9845,blurb:'Puerta de entrada: Alcázar, catedral y Triana. Se llega en avión y se recoge la van.',trips:['alcazar','plazaespana','italica']},
+  cordoba:{name:'Córdoba',color:'#e9b949',nights:1,lat:37.8790,lng:-4.7794,blurb:'Una noche de paso: la Mezquita, la judería y el puente romano al atardecer.',trips:['mezquita']},
   granada:{name:'Granada',color:'#a78bfa',nights:3,lat:37.1773,lng:-3.5986,blurb:'La Alhambra, el Albaicín y los miradores. Base para bajar a las Alpujarras.',trips:['alhambra','albaicin','alpujarras']},
   sanjose:{name:'Cabo de Gata',color:'#2dd4bf',nights:2,lat:36.7590,lng:-2.1070,blurb:'El agua turquesa del viaje: calas de arena volcánica dentro de un parque natural, sin urbanizar.',trips:['monsul','genoveses','isleta','rodalquilar','faro']},
   ronda:{name:'Ronda',color:'#4ade80',nights:2,lat:36.7420,lng:-5.1670,blurb:'El Tajo y el Puente Nuevo, con los pueblos blancos de la sierra a media hora.',trips:['setenil','zaharasierra','grazalema']},
-  vejer:{name:'Vejer / Costa de la Luz',color:'#fb923c',nights:2,lat:36.2540,lng:-5.9660,blurb:'Pueblo blanco encaramado sobre el Atlántico. Playas anchas de dunas y levante.',trips:['bolonia','zaharaatunes','canos']},
-  sevilla:{name:'Sevilla',color:'#fb7185',nights:3,lat:37.3891,lng:-5.9845,blurb:'Alcázar, catedral y Triana. La ciudad grande del viaje.',trips:['alcazar','plazaespana','italica']},
-  cordoba:{name:'Córdoba',color:'#e9b949',nights:1,lat:37.8790,lng:-4.7794,blurb:'Última noche: la Mezquita y la judería, a mitad de camino de Madrid.',trips:['mezquita']},
+  vejer:{name:'Vejer / Costa de la Luz',color:'#fb923c',nights:2,lat:36.2540,lng:-5.9660,blurb:'Cierre de playa: pueblo blanco sobre el Atlántico, dunas y arena abierta.',trips:['bolonia','zaharaatunes','canos','cadiz']},
 };
-const ORDER=['granada','sanjose','ronda','vejer','sevilla','cordoba'];
+const ORDER=['sevilla','cordoba','granada','sanjose','ronda','vejer'];
 
 const POI = {
-  mad:{emoji:'✈️',name:'Madrid (salida y regreso)',air:true,lat:40.4936,lng:-3.5668},
-  ubeda:{emoji:'🏛️',name:'Úbeda y Baeza',stop:true,sug:true,lat:38.0138,lng:-3.3706,visit:'2 h',wt:'Úbeda',wten:'Úbeda',desc:'Parada a mitad de la bajada a Granada: dos ciudades renacentistas Patrimonio de la Humanidad, casi pegadas.'},
+  svq:{emoji:'✈️',name:'Aeropuerto de Sevilla (SVQ)',air:true,lat:37.4180,lng:-5.8931},
+  sevilla:{emoji:'🏛️',name:'Sevilla',lat:37.3891,lng:-5.9845,visit:'2 días',wt:'Sevilla',wten:'Seville',desc:'Catedral y Giralda, Santa Cruz, Triana y las azoteas.'},
+  alcazar:{emoji:'🕌',name:'Real Alcázar',lat:37.3830,lng:-5.9905,visit:'3 h',wt:'Real Alcázar de Sevilla',wten:'Alcázar of Seville',desc:'Palacio mudéjar y jardines. Entrada con hora: reservar online.'},
+  plazaespana:{emoji:'🎭',name:'Plaza de España',lat:37.3772,lng:-5.9869,visit:'1,5 h',wt:'Plaza de España (Sevilla)',wten:'Plaza de España, Seville',desc:'La plaza de los azulejos y el canal, dentro del parque de María Luisa.'},
+  italica:{emoji:'🏟️',name:'Itálica',sug:true,lat:37.4440,lng:-6.0450,visit:'2 h',wt:'Itálica',wten:'Italica',desc:'Anfiteatro romano para 25.000 personas a 20 min de Sevilla. Cuna de Trajano.'},
+  cordoba:{emoji:'🏛️',name:'Córdoba',lat:37.8790,lng:-4.7794,visit:'1 día',wt:'Córdoba (España)',wten:'Córdoba, Spain',desc:'La judería, el puente romano y los patios.'},
+  mezquita:{emoji:'🕌',name:'Mezquita-Catedral',lat:37.8789,lng:-4.7794,visit:'2 h',wt:'Mezquita de Córdoba',wten:'Mosque–Cathedral of Córdoba',desc:'El bosque de arcos rojiblancos. Mejor a última hora, con menos gente.'},
   granada:{emoji:'🏛️',name:'Granada',lat:37.1773,lng:-3.5986,visit:'2 días',wt:'Granada',wten:'Granada',desc:'Catedral y Capilla Real, la Alcaicería y el tapeo del centro.'},
   alhambra:{emoji:'🕌',name:'La Alhambra',lat:37.1761,lng:-3.5881,visit:'Medio día',wt:'Alhambra',wten:'Alhambra',desc:'Palacios nazaríes, Alcazaba y Generalife. Entrada con hora fija: hay que reservarla con meses.'},
   albaicin:{emoji:'🌇',name:'Albaicín y San Nicolás',lat:37.1810,lng:-3.5928,visit:'2 h',wt:'Albaicín',wten:'Albaicín',desc:'El mirador de San Nicolás al atardecer, con la Alhambra enfrente y Sierra Nevada detrás.'},
   alpujarras:{emoji:'⛰️',name:'Las Alpujarras',sug:true,lat:36.9430,lng:-3.3660,visit:'1 día',wt:'Pampaneira',wten:'Pampaneira',desc:'Pampaneira, Bubión y Capileira colgados del barranco de Poqueira. Camino corto entre los tres pueblos.'},
-  guadix:{emoji:'🏘️',name:'Guadix',stop:true,sug:true,lat:37.2990,lng:-3.1370,visit:'1 h',wt:'Guadix',wten:'Guadix',desc:'Barrio de casas-cueva habitadas, con las chimeneas asomando del cerro. Desvío corto camino de Almería.'},
+  guadix:{emoji:'🏘️',name:'Guadix',stop:true,sug:true,lat:37.2990,lng:-3.1370,visit:'1 h',wt:'Guadix',wten:'Guadix',desc:'Barrio de casas-cueva habitadas, con las chimeneas asomando del cerro. Parada camino de Almería.'},
   sanjose:{emoji:'🏖️',name:'San José',lat:36.7590,lng:-2.1070,visit:'2 días',wt:'San José (Almería)',wten:'San José, Almería',desc:'Pueblo-base del parque natural, con playa propia y sitio donde comer.'},
-  monsul:{emoji:'🏖️',name:'Cala de Mónsul',lat:36.7290,lng:-2.1330,visit:'Medio día',wt:'Playa de Mónsul',wten:'Mónsul',desc:'Arena oscura, la duna y la roca-ola. Agua transparente y entrada suave.'},
   genoveses:{emoji:'🏖️',name:'Playa de los Genoveses',lat:36.7420,lng:-2.1230,visit:'Medio día',wt:'Playa de los Genoveses',wten:'Playa de los Genoveses',desc:'Bahía enorme y somera, protegida del viento. La mejor para Elina.'},
+  monsul:{emoji:'🏖️',name:'Cala de Mónsul',lat:36.7290,lng:-2.1330,visit:'Medio día',wt:'Playa de Mónsul',wten:'Mónsul',desc:'Arena oscura, la duna y la roca-ola. Agua transparente y entrada suave.'},
   isleta:{emoji:'⚓',name:'La Isleta del Moro',lat:36.8200,lng:-2.0530,visit:'1 h',wt:'La Isleta del Moro',wten:'La Isleta del Moro',desc:'Aldea de pescadores de veinte casas, con barcas varadas y un mirador arriba.'},
   rodalquilar:{emoji:'🏖️',name:'Rodalquilar y el Playazo',lat:36.8630,lng:-2.0470,visit:'3 h',wt:'Rodalquilar',wten:'Rodalquilar',desc:'Antiguas minas de oro y una playa larguísima con un castillo del XVIII a pie de arena.'},
   faro:{emoji:'🌅',name:'Arrecife de las Sirenas',lat:36.7230,lng:-2.1900,visit:'1 h',wt:'Cabo de Gata',wten:'Cabo de Gata',desc:'Los farallones volcánicos bajo el faro. Mejor al atardecer.'},
-  torcal:{emoji:'🌿',name:'El Torcal de Antequera',sug:true,lat:36.9530,lng:-4.5450,visit:'3 h',wt:'El Torcal',wten:'El Torcal',desc:'Laberinto de roca caliza erosionada en capas. La Ruta Verde son 1,5 km fáciles y señalizados.'},
   antequera:{emoji:'🗿',name:'Antequera',stop:true,lat:37.0194,lng:-4.5612,visit:'2 h',wt:'Antequera',wten:'Antequera',desc:'Los dólmenes de Menga y Viera (Patrimonio) y la Peña de los Enamorados enfrente.'},
+  torcal:{emoji:'🌿',name:'El Torcal de Antequera',sug:true,lat:36.9530,lng:-4.5450,visit:'3 h',wt:'El Torcal',wten:'El Torcal',desc:'Laberinto de roca caliza erosionada en capas. La Ruta Verde son 1,5 km fáciles y señalizados.'},
   malaga:{emoji:'🏛️',name:'Málaga',stop:true,lat:36.7213,lng:-4.4213,visit:'Medio día',wt:'Málaga',wten:'Málaga',desc:'Alcazaba, catedral y museo Picasso. Alternativa costera al Torcal ese mismo día.'},
   ronda:{emoji:'🌉',name:'Ronda',lat:36.7420,lng:-5.1670,visit:'1 día',wt:'Ronda',wten:'Ronda',desc:'El Puente Nuevo sobre el Tajo de 100 m, la plaza de toros y los baños árabes.'},
   setenil:{emoji:'🏘️',name:'Setenil de las Bodegas',lat:36.8640,lng:-5.1810,visit:'1,5 h',wt:'Setenil de las Bodegas',wten:'Setenil de las Bodegas',desc:'Calles metidas debajo de la roca: el peñasco hace de techo de los bares.'},
@@ -478,37 +483,56 @@ const POI = {
   zaharaatunes:{emoji:'🏖️',name:'Zahara de los Atunes',lat:36.1370,lng:-5.8480,visit:'3 h',wt:'Zahara de los Atunes',wten:'Zahara de los Atunes',desc:'Kilómetros de arena abierta y el atún rojo de almadraba en la mesa.'},
   canos:{emoji:'🌅',name:'Caños de Meca y Trafalgar',lat:36.1830,lng:-6.0330,visit:'3 h',wt:'Cabo de Trafalgar',wten:'Cape Trafalgar',desc:'Faro sobre un istmo de arena. Los mejores atardeceres de la costa.'},
   tarifa:{emoji:'🪁',name:'Tarifa',sug:true,lat:36.0140,lng:-5.6060,visit:'2 h',wt:'Tarifa',wten:'Tarifa',desc:'La punta de Europa: se ve África enfrente y el cielo lleno de cometas.'},
-  cadiz:{emoji:'🏛️',name:'Cádiz',stop:true,lat:36.5297,lng:-6.2926,visit:'Medio día',wt:'Cádiz',wten:'Cádiz',desc:'La ciudad más antigua de Occidente, rodeada de mar por tres lados. Catedral, La Caleta y el mercado.'},
-  sevilla:{emoji:'🏛️',name:'Sevilla',lat:37.3891,lng:-5.9845,visit:'2 días',wt:'Sevilla',wten:'Seville',desc:'Catedral y Giralda, Santa Cruz, Triana y las azoteas.'},
-  alcazar:{emoji:'🕌',name:'Real Alcázar',lat:37.3830,lng:-5.9905,visit:'3 h',wt:'Real Alcázar de Sevilla',wten:'Alcázar of Seville',desc:'Palacio mudéjar y jardines. Entrada con hora: reservar online.'},
-  plazaespana:{emoji:'🎭',name:'Plaza de España',lat:37.3772,lng:-5.9869,visit:'1,5 h',wt:'Plaza de España (Sevilla)',wten:'Plaza de España, Seville',desc:'La plaza de los azulejos y el canal, dentro del parque de María Luisa.'},
-  italica:{emoji:'🏟️',name:'Itálica',sug:true,lat:37.4440,lng:-6.0450,visit:'2 h',wt:'Itálica',wten:'Italica',desc:'Anfiteatro romano para 25.000 personas a 20 min de Sevilla. Cuna de Trajano.'},
-  cordoba:{emoji:'🏛️',name:'Córdoba',lat:37.8790,lng:-4.7794,visit:'1 día',wt:'Córdoba (España)',wten:'Córdoba, Spain',desc:'La judería, el puente romano y los patios.'},
-  mezquita:{emoji:'🕌',name:'Mezquita-Catedral',lat:37.8789,lng:-4.7794,visit:'2 h',wt:'Mezquita de Córdoba',wten:'Mosque–Cathedral of Córdoba',desc:'El bosque de arcos rojiblancos. Mejor a última hora, con menos gente.'},
+  cadiz:{emoji:'🏛️',name:'Cádiz',lat:36.5297,lng:-6.2926,visit:'Medio día',wt:'Cádiz',wten:'Cádiz',desc:'La ciudad más antigua de Occidente, rodeada de mar por tres lados. A 50 min de Vejer.'},
 };
 
-const SPINE=[['mad','ubeda','3 h'],['ubeda','granada','1 h 30'],['granada','guadix','55 min'],['guadix','sanjose','1 h 40'],['sanjose','antequera','3 h'],['antequera','ronda','1 h 05'],['ronda','vejer','1 h 45'],['vejer','cadiz','50 min'],['cadiz','sevilla','1 h 20'],['sevilla','cordoba','1 h 30'],['cordoba','mad','3 h 50']];
-const SPURS=[['granada','alhambra','15 min'],['granada','albaicin','15 min'],['granada','alpujarras','1 h 20'],['sanjose','genoveses','15 min'],['genoveses','monsul','10 min'],['sanjose','isleta','20 min'],['isleta','rodalquilar','10 min'],['sanjose','faro','30 min'],['antequera','torcal','25 min'],['antequera','malaga','50 min'],['ronda','setenil','35 min'],['setenil','zaharasierra','45 min'],['zaharasierra','grazalema','30 min'],['grazalema','majaceite','25 min'],['vejer','bolonia','40 min'],['bolonia','tarifa','25 min'],['bolonia','zaharaatunes','25 min'],['vejer','canos','25 min'],['sevilla','alcazar','5 min'],['sevilla','plazaespana','10 min'],['sevilla','italica','20 min'],['cordoba','mezquita','5 min']];
+const SPINE=[['svq','sevilla','20 min'],['sevilla','cordoba','1 h 30'],['cordoba','granada','2 h 20'],['granada','guadix','55 min'],['guadix','sanjose','1 h 40'],['sanjose','antequera','3 h'],['antequera','ronda','1 h 05'],['ronda','vejer','1 h 45'],['vejer','svq','1 h 45']];
+const SPURS=[['sevilla','alcazar','5 min'],['sevilla','plazaespana','10 min'],['sevilla','italica','20 min'],['cordoba','mezquita','5 min'],['granada','alhambra','15 min'],['granada','albaicin','15 min'],['granada','alpujarras','1 h 20'],['sanjose','genoveses','15 min'],['genoveses','monsul','10 min'],['sanjose','isleta','20 min'],['isleta','rodalquilar','10 min'],['sanjose','faro','30 min'],['antequera','torcal','25 min'],['antequera','malaga','50 min'],['ronda','setenil','35 min'],['setenil','zaharasierra','45 min'],['zaharasierra','grazalema','30 min'],['grazalema','majaceite','25 min'],['vejer','bolonia','40 min'],['bolonia','tarifa','25 min'],['bolonia','zaharaatunes','25 min'],['vejer','canos','25 min'],['vejer','cadiz','50 min']];
 
 /* ============ Agenda ============ */
 const DAYS=[
- {d:'Vie 2 oct',bs:'Madrid → Granada',c:'#94a3b8',load:['y','Traslado'],items:[
-   {t:'09:30',k:'drive',poi:'mad',a:'Recoger la van de 9 plazas en Madrid',n:'Las maletas de París se quedan guardadas en Madrid'},
-   {t:'10:00',k:'drive',a:'Madrid → Úbeda (3 h) por la A-4'},
-   {t:'13:00',k:'visit',poi:'ubeda',a:'Úbeda: plaza Vázquez de Molina',n:'Parada para estirar las piernas a mitad de camino'},
-   {t:'14:00',k:'meal',a:'Almuerzo en Úbeda'},
-   {t:'15:30',k:'drive',a:'Úbeda → Granada (1 h 30)'},
-   {t:'17:00',k:'visit',poi:'granada',a:'Llegada y check-in en Granada'},
+ {d:'Vie 2 oct',bs:'Madrid → Sevilla',c:'#94a3b8',load:['g','Llegada'],items:[
+   {t:'—',k:'flight',a:'Vuelo Madrid → Sevilla (SVQ)',n:'1 h 15 de vuelo. Falta comprarlo: con la hora se ajusta el resto del día'},
+   {t:'13:00',k:'drive',poi:'svq',a:'Recoger la van de 9 plazas en el aeropuerto'},
+   {t:'14:00',k:'visit',poi:'sevilla',a:'Check-in en Sevilla y almuerzo',n:'20 min del aeropuerto al centro'},
+   {t:'18:00',k:'visit',poi:'sevilla',a:'Primer paseo: Santa Cruz y la Giralda por fuera',n:'Toma de contacto suave tras el viaje'},
+   {t:'21:30',k:'meal',a:'Cena de bienvenida en Sevilla'}]},
+ {d:'Sáb 3 oct',bs:'Sevilla',c:'#fb7185',load:['y','Lleno'],items:[
+   {t:'09:00',k:'visit',poi:'alcazar',a:'Real Alcázar (entrada con hora)',n:'Se agota: reservar online con antelación'},
+   {t:'12:00',k:'visit',poi:'sevilla',a:'Catedral y subida a la Giralda'},
+   {t:'14:00',k:'meal',a:'Almuerzo en Santa Cruz'},
+   {t:'16:30',k:'visit',poi:'plazaespana',a:'Plaza de España y parque de María Luisa'},
+   {t:'19:00',k:'visit',poi:'sevilla',a:'Triana: mercado, puente y bares'},
+   {t:'22:00',k:'meal',a:'Cena y tablao de flamenco',n:'Reservar: Casa de la Memoria o La Carbonería'}]},
+ {d:'Dom 4 oct',bs:'Sevilla · Itálica',c:'#fb7185',load:['g','Suave'],items:[
+   {t:'09:30',k:'drive',a:'Sevilla → Itálica (20 min)'},
+   {t:'10:00',k:'visit',poi:'italica',a:'Itálica: anfiteatro y mosaicos',n:'Gratis para ciudadanos de la UE'},
+   {t:'12:30',k:'drive',a:'Volver a Sevilla (20 min)'},
+   {t:'13:30',k:'meal',a:'Almuerzo en Sevilla'},
+   {t:'16:00',k:'visit',poi:'sevilla',a:'Setas de Sevilla y paseo por el centro'},
+   {t:'18:30',k:'rest',a:'Tarde libre / descanso'},
+   {t:'21:30',k:'meal',a:'Última cena en Sevilla'}]},
+ {d:'Lun 5 oct',bs:'Sevilla → Córdoba',c:'#e9b949',load:['g','Suave'],items:[
+   {t:'10:00',k:'drive',a:'Sevilla → Córdoba (1 h 30)'},
+   {t:'11:30',k:'visit',poi:'cordoba',a:'Check-in y paseo por la judería'},
+   {t:'13:30',k:'meal',a:'Almuerzo cordobés: salmorejo y flamenquín'},
+   {t:'16:00',k:'visit',poi:'mezquita',a:'Mezquita-Catedral',n:'A última hora entra menos gente'},
+   {t:'18:30',k:'visit',poi:'cordoba',a:'Puente Romano y la Calahorra al atardecer'},
+   {t:'21:00',k:'meal',a:'Cena en Córdoba'}]},
+ {d:'Mar 6 oct',bs:'Córdoba → Granada',c:'#a78bfa',load:['g','Traslado'],items:[
+   {t:'10:00',k:'visit',poi:'cordoba',a:'Mañana suelta por Córdoba: patios y Alcázar'},
+   {t:'12:30',k:'drive',a:'Córdoba → Granada (2 h 20)'},
+   {t:'15:00',k:'visit',poi:'granada',a:'Check-in en Granada y almuerzo tardío'},
    {t:'19:00',k:'visit',poi:'albaicin',a:'Mirador de San Nicolás al atardecer',n:'La Alhambra enfrente, encendida'},
-   {t:'21:00',k:'meal',a:'Cena de bienvenida en el Albaicín'}]},
- {d:'Sáb 3 oct',bs:'Granada',c:'#a78bfa',load:['y','Lleno'],items:[
+   {t:'21:30',k:'meal',a:'Cena en el Albaicín'}]},
+ {d:'Mié 7 oct',bs:'Granada · Alhambra',c:'#a78bfa',load:['y','Lleno'],items:[
    {t:'08:30',k:'visit',poi:'alhambra',a:'La Alhambra: Alcazaba y Palacios Nazaríes',n:'Los nazaríes tienen hora exacta: llegar 45 min antes'},
    {t:'12:00',k:'visit',poi:'alhambra',a:'Generalife y sus jardines'},
    {t:'13:30',k:'meal',a:'Almuerzo en el Realejo'},
    {t:'16:00',k:'visit',poi:'granada',a:'Capilla Real y Catedral'},
    {t:'17:30',k:'visit',poi:'granada',a:'Alcaicería y plaza Bib-Rambla'},
    {t:'20:30',k:'meal',a:'Tapeo por calle Navas',n:'En Granada la tapa va incluida con la bebida'}]},
- {d:'Dom 4 oct',bs:'Granada · Alpujarras',c:'#a78bfa',load:['y','Lleno'],items:[
+ {d:'Jue 8 oct',bs:'Granada · Alpujarras',c:'#a78bfa',load:['y','Lleno'],items:[
    {t:'09:00',k:'drive',a:'Granada → Pampaneira (1 h 20)'},
    {t:'10:30',k:'visit',poi:'alpujarras',a:'Pampaneira: telares, plaza y jarapas'},
    {t:'11:45',k:'visit',poi:'alpujarras',a:'Subir a Bubión y Capileira',n:'Los tres pueblos se pueden enlazar a pie (~1 h, con cuesta)'},
@@ -516,14 +540,14 @@ const DAYS=[
    {t:'16:00',k:'rest',poi:'alpujarras',a:'Mirador del barranco de Poqueira'},
    {t:'17:30',k:'drive',a:'Volver a Granada (1 h 20)'},
    {t:'21:00',k:'meal',a:'Cena en Granada'}]},
- {d:'Lun 5 oct',bs:'Granada → Cabo de Gata',c:'#2dd4bf',load:['g','Suave'],items:[
+ {d:'Vie 9 oct',bs:'Granada → Cabo de Gata',c:'#2dd4bf',load:['g','Suave'],items:[
    {t:'09:30',k:'drive',a:'Salida hacia Almería (55 min)'},
    {t:'10:30',k:'visit',poi:'guadix',a:'Guadix: barrio de casas-cueva',n:'Desvío corto, ~1 h'},
    {t:'12:00',k:'drive',a:'Guadix → San José (1 h 40)'},
    {t:'14:00',k:'visit',poi:'sanjose',a:'Check-in en San José y almuerzo'},
    {t:'16:30',k:'beach',poi:'sanjose',a:'Playa de San José, a pie desde la casa'},
    {t:'20:30',k:'meal',a:'Cena de pescado junto al puerto'}]},
- {d:'Mar 6 oct',bs:'Cabo de Gata',c:'#2dd4bf',load:['g','Playa'],items:[
+ {d:'Sáb 10 oct',bs:'Cabo de Gata',c:'#2dd4bf',load:['g','Playa'],items:[
    {t:'09:30',k:'beach',poi:'genoveses',a:'Playa de los Genoveses',n:'Bahía somera y protegida del viento: la mejor para Elina. En octubre ya se puede entrar en coche'},
    {t:'12:00',k:'beach',poi:'monsul',a:'Cala de Mónsul: la duna y la roca-ola',n:'A 10 min de Genoveses'},
    {t:'14:00',k:'meal',a:'Almuerzo en San José'},
@@ -531,14 +555,14 @@ const DAYS=[
    {t:'17:00',k:'beach',poi:'rodalquilar',a:'Playazo de Rodalquilar y su castillo'},
    {t:'19:00',k:'visit',poi:'faro',a:'Arrecife de las Sirenas al atardecer'},
    {t:'21:00',k:'meal',a:'Cena en San José'}]},
- {d:'Mié 7 oct',bs:'Cabo de Gata → Ronda',c:'#4ade80',load:['r','Intenso'],items:[
+ {d:'Dom 11 oct',bs:'Cabo de Gata → Ronda',c:'#4ade80',load:['r','Intenso'],items:[
    {t:'08:30',k:'drive',a:'San José → Antequera (3 h)',n:'El traslado más largo del viaje: desayuno antes de salir'},
    {t:'11:30',k:'visit',poi:'torcal',a:'El Torcal: Ruta Verde',n:'1,5 km fáciles entre paredes de caliza. Aparcamiento limitado'},
    {t:'13:30',k:'visit',poi:'antequera',a:'Dólmenes de Menga y Viera + almuerzo',n:'Alternativa del día: bajar a Málaga (Alcazaba y Picasso) en vez del Torcal'},
    {t:'16:00',k:'drive',a:'Antequera → Ronda (1 h 05)'},
    {t:'17:30',k:'visit',poi:'ronda',a:'Check-in y Puente Nuevo al atardecer'},
    {t:'21:00',k:'meal',a:'Cena en Ronda'}]},
- {d:'Jue 8 oct',bs:'Ronda · pueblos blancos',c:'#4ade80',load:['y','Lleno'],items:[
+ {d:'Lun 12 oct',bs:'Ronda · pueblos blancos',c:'#4ade80',load:['y','Lleno'],items:[
    {t:'09:30',k:'drive',a:'Ronda → Setenil (35 min)'},
    {t:'10:00',k:'visit',poi:'setenil',a:'Setenil de las Bodegas: las calles bajo la roca'},
    {t:'11:45',k:'drive',a:'Setenil → Zahara de la Sierra (45 min)'},
@@ -548,7 +572,7 @@ const DAYS=[
    {t:'16:00',k:'visit',poi:'grazalema',a:'Grazalema: pueblo y sierra',n:'Si sobra tiempo: sendero del río Majaceite, 5 km llanos y a la sombra'},
    {t:'18:00',k:'drive',a:'Volver a Ronda (35 min)'},
    {t:'21:00',k:'meal',a:'Cena en Ronda'}]},
- {d:'Vie 9 oct',bs:'Ronda → Costa de la Luz',c:'#fb923c',load:['g','Suave'],items:[
+ {d:'Mar 13 oct',bs:'Ronda → Costa de la Luz',c:'#fb923c',load:['g','Suave'],items:[
    {t:'09:30',k:'visit',poi:'ronda',a:'Plaza de toros y Baños Árabes'},
    {t:'11:00',k:'visit',poi:'ronda',a:'Bajada al Tajo por los Jardines de Cuenca'},
    {t:'12:30',k:'meal',a:'Almuerzo en Ronda'},
@@ -556,56 +580,25 @@ const DAYS=[
    {t:'16:30',k:'visit',poi:'vejer',a:'Check-in en Vejer y paseo por el casco'},
    {t:'19:30',k:'visit',poi:'vejer',a:'Mirador de la Cobijada'},
    {t:'21:00',k:'meal',a:'Cena en Vejer'}]},
- {d:'Sáb 10 oct',bs:'Costa de la Luz',c:'#fb923c',load:['g','Playa'],items:[
+ {d:'Mié 14 oct',bs:'Costa de la Luz',c:'#fb923c',load:['g','Playa'],items:[
    {t:'10:00',k:'drive',a:'Vejer → Bolonia (40 min)'},
    {t:'10:45',k:'visit',poi:'bolonia',a:'Baelo Claudia: ciudad romana a pie de playa'},
    {t:'12:30',k:'beach',poi:'bolonia',a:'Playa de Bolonia y la duna',n:'Se sube descalzo; desde arriba se ve África'},
    {t:'14:30',k:'meal',a:'Almuerzo en un chiringuito de Bolonia'},
-   {t:'16:30',k:'beach',poi:'zaharaatunes',a:'Zahara de los Atunes',n:'Si sopla levante fuerte, cambiar el plan por Cádiz o Tarifa'},
+   {t:'16:30',k:'beach',poi:'zaharaatunes',a:'Zahara de los Atunes',n:'Si sopla levante fuerte, cambiar el día por Cádiz (50 min de Vejer)'},
    {t:'19:00',k:'visit',poi:'canos',a:'Faro de Trafalgar al atardecer'},
-   {t:'21:30',k:'meal',a:'Cena en Caños de Meca'}]},
- {d:'Dom 11 oct',bs:'Costa de la Luz → Sevilla',c:'#fb7185',load:['y','Lleno'],items:[
-   {t:'09:30',k:'drive',a:'Vejer → Cádiz (50 min)'},
-   {t:'10:30',k:'visit',poi:'cadiz',a:'Cádiz: catedral, torre Tavira y La Caleta'},
-   {t:'13:30',k:'meal',a:'Almuerzo en el mercado de Cádiz'},
-   {t:'15:30',k:'drive',a:'Cádiz → Sevilla (1 h 20)'},
-   {t:'17:00',k:'visit',poi:'sevilla',a:'Check-in en Sevilla'},
-   {t:'19:00',k:'visit',poi:'sevilla',a:'Primer paseo: Santa Cruz y la Giralda por fuera'},
-   {t:'21:30',k:'meal',a:'Cena en Sevilla'}]},
- {d:'Lun 12 oct',bs:'Sevilla',c:'#fb7185',load:['y','Lleno'],items:[
-   {t:'09:00',k:'visit',poi:'alcazar',a:'Real Alcázar (entrada con hora)',n:'12 de octubre es fiesta nacional: confirmar horarios'},
-   {t:'12:00',k:'visit',poi:'sevilla',a:'Catedral y subida a la Giralda'},
-   {t:'14:00',k:'meal',a:'Almuerzo en Santa Cruz'},
-   {t:'16:30',k:'visit',poi:'plazaespana',a:'Plaza de España y parque de María Luisa'},
-   {t:'19:00',k:'visit',poi:'sevilla',a:'Triana: mercado, puente y bares'},
-   {t:'22:00',k:'meal',a:'Cena y tablao de flamenco',n:'Reservar: Casa de la Memoria o La Carbonería'}]},
- {d:'Mar 13 oct',bs:'Sevilla · Itálica',c:'#fb7185',load:['g','Suave'],items:[
-   {t:'09:30',k:'drive',a:'Sevilla → Itálica (20 min)'},
-   {t:'10:00',k:'visit',poi:'italica',a:'Itálica: anfiteatro y mosaicos',n:'Gratis para ciudadanos de la UE'},
-   {t:'12:30',k:'drive',a:'Volver a Sevilla (20 min)'},
-   {t:'13:30',k:'meal',a:'Almuerzo en Sevilla'},
-   {t:'16:00',k:'visit',poi:'sevilla',a:'Setas de Sevilla y compras por el centro'},
-   {t:'18:30',k:'rest',a:'Tarde libre / descanso'},
-   {t:'21:30',k:'meal',a:'Última cena en Sevilla'}]},
- {d:'Mié 14 oct',bs:'Sevilla → Córdoba',c:'#e9b949',load:['g','Suave'],items:[
-   {t:'10:00',k:'drive',a:'Sevilla → Córdoba (1 h 30)'},
-   {t:'11:30',k:'visit',poi:'cordoba',a:'Check-in y paseo por la judería'},
-   {t:'13:30',k:'meal',a:'Almuerzo cordobés: salmorejo y flamenquín'},
-   {t:'16:00',k:'visit',poi:'mezquita',a:'Mezquita-Catedral',n:'A última hora entra menos gente'},
-   {t:'18:30',k:'visit',poi:'cordoba',a:'Puente Romano y la Calahorra al atardecer'},
-   {t:'21:00',k:'meal',a:'Cena de despedida en Córdoba'}]},
- {d:'Jue 15 oct',bs:'Córdoba → Madrid · París',c:'#94a3b8',load:['y','Salida'],items:[
-   {t:'07:30',k:'drive',a:'Córdoba → Madrid (3 h 50)',n:'Salir temprano: es día de vuelo'},
-   {t:'11:30',k:'drive',poi:'mad',a:'Devolver la van y recoger las maletas de París'},
-   {t:'13:00',k:'flight',a:'Vuelo Madrid → París',n:'Falta comprarlo: ajustar la hora de salida de Córdoba cuando se sepa'}]},
+   {t:'21:30',k:'meal',a:'Cena de despedida en Caños de Meca'}]},
+ {d:'Jue 15 oct',bs:'Vejer → Sevilla · París',c:'#94a3b8',load:['g','Salida'],items:[
+   {t:'08:30',k:'drive',a:'Vejer → aeropuerto de Sevilla (1 h 45)',n:'Si el vuelo es por la tarde, cabe parar en Cádiz de camino'},
+   {t:'10:30',k:'drive',poi:'svq',a:'Devolver la van (depósito lleno)'},
+   {t:'12:00',k:'flight',a:'Vuelo a París',n:'Falta decidir: directo desde Sevilla, o vía Madrid si las maletas de París se quedaron allá'}]},
 ];
 const KIC={flight:'✈️',drive:'🚐',visit:'🏛️',beach:'🏖️',meal:'🍽️',rest:'😎',ferry:'⛴️',wine:'🍇'};
-const RESV={0:'🚐 Van de 9 plazas desde Madrid: reservarla con antelación, en octubre escasean. Las maletas de París se quedan guardadas en Madrid.',1:'🕌 LA ALHAMBRA ES LO MÁS URGENTE: las entradas de los Palacios Nazaríes se agotan con meses. Reservar en cuanto se decida el viaje, en tickets.alhambra-patronato.es.',5:'🌿 El Torcal tiene aparcamiento limitado. Llegar antes de las 11:00 o subir en lanzadera desde Antequera.',10:'🕌 Real Alcázar con hora reservada online + tablao de flamenco. Ojo: el 12 de octubre es fiesta nacional.',12:'🕌 Mezquita-Catedral: entrada online con hora.',13:'⛽ Devolver la van con el depósito lleno y hacer fotos del estado antes de entregarla.'};
+const RESV={0:'🚐 Van de 9 plazas en el aeropuerto de Sevilla: reservarla con antelación, escasean. Ojo con el equipaje de 8 personas en el vuelo desde Madrid.',1:'🕌 Real Alcázar con hora reservada online + tablao de flamenco.',3:'🕌 Mezquita-Catedral: entrada online con hora.',5:'🕌 LA ALHAMBRA ES LO MÁS URGENTE: las entradas de los Palacios Nazaríes se agotan con meses. Reservar en cuanto se decida el viaje, en tickets.alhambra-patronato.es.',9:'🌿 El Torcal tiene aparcamiento limitado. Llegar antes de las 11:00 o subir en lanzadera desde Antequera.',13:'⛽ Devolver la van con el depósito lleno y hacer fotos del estado antes de entregarla.'};
 
 /* ============ Fotos (Wikimedia Commons, fijas) ============ */
 const U='https://upload.wikimedia.org/wikipedia/commons/thumb/';
 const IMG={
-  ubeda:U+'4/4e/Plaza_V%C3%A1zquez_de_Molina_%28%C3%9Abeda%29.jpg/960px-Plaza_V%C3%A1zquez_de_Molina_%28%C3%9Abeda%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail',
   granada:U+'f/f2/Granada%2C_Calle_Alcaicer%C3%ADa.jpg/960px-Granada%2C_Calle_Alcaicer%C3%ADa.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail',
   alhambra:U+'f/f3/Fountain_patio_de_los_Leones_Alhambra_Granada_Spain.jpg/960px-Fountain_patio_de_los_Leones_Alhambra_Granada_Spain.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail',
   albaicin:U+'1/1e/Granada_-_View_from_Mirador_de_San_Nicol%C3%A1s_-_02.jpg/960px-Granada_-_View_from_Mirador_de_San_Nicol%C3%A1s_-_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail',
@@ -643,7 +636,7 @@ const imgTag=id=>IMG[id]?`<img src="${IMG[id]}" loading="lazy" onload="this.clas
 /* ============ Mapa ============ */
 const poiBase={};Object.entries(BASES).forEach(([bid,b])=>{poiBase[bid]=bid;b.trips.forEach(t=>poiBase[t]=bid);});
 const colorOf=id=>BASES[poiBase[id]]?BASES[poiBase[id]].color:'#94a3b8';
-const map=L.map('map',{zoomControl:true}).setView([37.2,-4.6],7);
+const map=L.map('map',{zoomControl:true}).setView([37.0,-4.6],8);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'&copy; OpenStreetMap &copy; CARTO',maxZoom:19}).addTo(map);
 const layerRoute=L.layerGroup().addTo(map),layerSpur=L.layerGroup().addTo(map),layerTime=L.layerGroup().addTo(map),layerPoi=L.layerGroup().addTo(map);
 const show={spur:true,sug:true,time:true};
@@ -696,9 +689,9 @@ function flyTo(id){if(!POI[id])return;map.flyTo([POI[id].lat,POI[id].lng],11,{du
 /* ============ Panel ============ */
 function renderMapView(){
   let html=`<div class="endpoints">
-     <div class="ep"><div class="lbl">🚐 Salida</div><div class="val">Madrid</div><div class="day">vie 2 oct · mañana</div></div>
-     <div class="ep"><div class="lbl">🛫 Regreso</div><div class="val">Madrid</div><div class="day">jue 15 oct · → París</div></div></div>
-   <div class="note luggage"><span class="ic">🧳</span><span>Las maletas de París se quedan en <b>Madrid</b>: por eso la ruta es un <b>bucle</b> y no un open-jaw.</span></div>
+     <div class="ep"><div class="lbl">🛬 Llegada</div><div class="val">Sevilla (SVQ)</div><div class="day">vie 2 oct · desde Madrid</div></div>
+     <div class="ep"><div class="lbl">🛫 Salida</div><div class="val">Sevilla (SVQ)</div><div class="day">jue 15 oct · → París</div></div></div>
+   <div class="note luggage"><span class="ic">🧳</span><span>Se vuela a Sevilla y la van se recoge y se devuelve allí: la ruta es un <b>bucle</b> alrededor de Sevilla.</span></div>
    <div class="sectionlbl">Bases · ${ORDER.length}</div>`;
   ORDER.forEach((id,i)=>{
     const b=BASES[id],s=sched[id];
