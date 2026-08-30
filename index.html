@@ -447,12 +447,12 @@ const BASES = {
   ronda:{name:'Ronda',color:'#4ade80',nights:2,lat:36.7420,lng:-5.1670,blurb:'El Tajo y el Puente Nuevo, con los pueblos blancos de la sierra a media hora.',trips:['setenil','zaharasierra','grazalema','majaceite']},
   costa:{name:'Costa Tropical',color:'#2dd4bf',nights:5,lat:36.7290,lng:-3.7290,blurb:'Los cinco días de parar. Base en La Herradura, justo entre Málaga y Almería: calas de agua turquesa, pueblo con vida y nada obligatorio que hacer.',trips:['almunecar','cantarrijan','maro','nerja','frigiliana','alpujarras']},
   granada:{name:'Granada',color:'#a78bfa',nights:1,lat:37.1773,lng:-3.5986,blurb:'La Alhambra y el Albaicín. Una sola noche, pero se llega a mediodía: la costa está a 1 h 10.',trips:['alhambra','albaicin']},
-  madrid:{name:'Madrid',color:'#94a3b8',nights:1,lat:40.4168,lng:-3.7038,blurb:'Última noche, para no jugarse el vuelo a París con 4 h 20 de van por delante.',trips:[]},
+  madrid:{name:'Madrid · Barajas',color:'#94a3b8',nights:1,lat:40.4936,lng:-3.5668,blurb:'Última noche cerca del aeropuerto: se devuelve la van por la mañana y se vuela a París sin jugársela con 4 h 20 de carretera el mismo día.',trips:[]},
 };
 const ORDER=['cordoba','sevilla','ronda','costa','granada','madrid'];
 
 const POI = {
-  madrid:{emoji:'🏙️',name:'Madrid',lat:40.4168,lng:-3.7038,visit:'Inicio y fin',wt:'Plaza Mayor de Madrid',wten:'Plaza Mayor, Madrid',desc:'De aquí sale la van el viernes 2 por la tarde y aquí se duerme la última noche, antes de volar a París.'},
+  madrid:{emoji:'✈️',name:'Madrid · Barajas (MAD)',lat:40.4936,lng:-3.5668,visit:'Inicio y fin',wt:'Aeropuerto Adolfo Suárez Madrid-Barajas',wten:'Adolfo Suárez Madrid–Barajas Airport',desc:'Aquí se recoge la van el viernes 2 por la tarde y aquí se devuelve el 15 por la mañana, justo antes del vuelo a París. Es donde está la flota de 9 plazas.'},
   cordoba:{emoji:'🏛️',name:'Córdoba',lat:37.8790,lng:-4.7794,visit:'1 mañana',wt:'Córdoba (España)',wten:'Córdoba, Spain',desc:'La judería, el puente romano y los patios. Rompe en dos el viaje desde Madrid.'},
   mezquita:{emoji:'🕌',name:'Mezquita-Catedral',lat:37.8789,lng:-4.7794,visit:'2 h',wt:'Mezquita de Córdoba',wten:'Mosque–Cathedral of Córdoba',desc:'El bosque de arcos rojiblancos. A primera hora del sábado, antes de que lleguen los autobuses.'},
   sevilla:{emoji:'🏛️',name:'Sevilla',lat:37.3891,lng:-5.9845,visit:'2,5 días',wt:'Sevilla',wten:'Seville',desc:'Catedral y Giralda, Santa Cruz, Triana y las azoteas.'},
@@ -485,7 +485,7 @@ const SPURS=[['cordoba','mezquita','5 min'],['sevilla','alcazar','5 min'],['sevi
 /* ============ Agenda ============ */
 const DAYS=[
  {d:'Vie 2 oct',bs:'Madrid → Córdoba',c:'#e9b949',load:['y','Traslado'],items:[
-   {t:'15:00',k:'drive',poi:'madrid',a:'Recoger la van de 9 plazas en Madrid',n:'Cargar 8 personas y su equipaje lleva más de lo que uno cree: contar una hora'},
+   {t:'15:00',k:'drive',poi:'madrid',a:'Recoger la van de 9 plazas en Barajas',n:'Cargar 8 personas y su equipaje lleva más de lo que uno cree: contar una hora. El noveno asiento va a hacer de maletero'},
    {t:'16:00',k:'drive',a:'Madrid → Córdoba (4 h por la A-4)',n:'Parar a media ruta, en Valdepeñas o Bailén, a estirar las piernas y merendar'},
    {t:'20:15',k:'visit',poi:'cordoba',a:'Check-in en Córdoba'},
    {t:'21:30',k:'meal',a:'Cena tranquila en la judería',n:'Nada de turismo hoy: es día de carretera'}]},
@@ -572,15 +572,15 @@ const DAYS=[
    {t:'08:30',k:'visit',poi:'alhambra',a:'La Alhambra: Alcazaba, Palacios Nazaríes y Generalife',n:'LA HORA DE LA ENTRADA MANDA EL DÍA. Si solo hay slot para la tarde del 13, se hace ayer y hoy queda la mañana libre; lo importante es no salir a Madrid más tarde de las 15:30'},
    {t:'13:30',k:'meal',a:'Almuerzo en Granada'},
    {t:'15:30',k:'drive',a:'Granada → Madrid (4 h 20)',n:'Parar en Despeñaperros a estirar; se llega de noche'},
-   {t:'20:00',k:'visit',poi:'madrid',a:'Check-in en Madrid'},
+   {t:'20:00',k:'visit',poi:'madrid',a:'Check-in cerca de Barajas',n:'Dormir junto al aeropuerto, no en el centro: mañana hay que devolver la van y volar'},
    {t:'21:30',k:'meal',a:'Cena de cierre del viaje'}]},
  {d:'Jue 15 oct',bs:'Madrid → París',c:'#94a3b8',load:['g','Salida'],items:[
-   {t:'09:00',k:'drive',poi:'madrid',a:'Devolver la van (depósito lleno)',n:'Hacer fotos del estado antes de entregarla'},
-   {t:'11:00',k:'rest',a:'Mañana libre en Madrid según la hora del vuelo'},
+   {t:'09:00',k:'drive',poi:'madrid',a:'Devolver la van en Barajas (depósito lleno)',n:'Llenar en una gasolinera cercana al aeropuerto y hacer fotos del estado antes de entregarla'},
+   {t:'11:00',k:'rest',a:'Espera en el aeropuerto según la hora del vuelo'},
    {t:'—',k:'flight',a:'Vuelo Madrid → París',n:'Falta comprarlo. Aquí se recogen las maletas de la feria que se quedaron en Madrid'}]},
 ];
 const KIC={flight:'✈️',drive:'🚐',visit:'🏛️',beach:'🏖️',meal:'🍽️',rest:'😎',ferry:'⛴️',wine:'🍇'};
-const RESV={0:'🚐 La van de 9 plazas se alquila ahora en MADRID, 13 días (2 oct tarde → 15 oct). Reservar ya: en 9 plazas hay poquísima flota. El depósito va en tarjeta de CRÉDITO física del conductor, y si la licencia no es de la UE hace falta permiso internacional (IDP).',
+const RESV={0:'🚐 VAN: 9 plazas en BARAJAS, 13 días (2 oct 15:00 → 15 oct 09:00). Pedir la versión LARGA (L2 / Grand): con las tres filas puestas el maletero son ~1.000 L y son 8 maletas contadas, así que el noveno asiento hace de maletero. Kilometraje ILIMITADO (la ruta son ~2.000 km), cobertura total sin franquicia prepagada, diésel lleno→lleno, silla para Elina. Depósito de €1.000–2.500 en tarjeta de CRÉDITO física del conductor. Y meter a Peter o Klaus como conductor adicional. ⚠️ EL IDP ES LO MÁS URGENTE: solo lo emite la ANT en Ecuador, no se saca ya estando allá.',
 1:'🕌 Mezquita-Catedral con hora comprada online. La franja gratuita de 08:30–09:30 (lun–sáb) NO sirve para el grupo: es solo para visitas individuales, máximo 2 personas.',
 2:'🏟️ Itálica cierra los lunes y los domingos solo abre de 9:00 a 15:00. Este domingo es la única ventana del viaje.',
 3:'🕌 Real Alcázar con hora reservada online + tablao de flamenco (Casa de la Memoria se llena).',
