@@ -719,6 +719,28 @@ let sBase=ORDER[0];
 let sParking=true;   /* toggle del formulario */
 let sFoto=null;      /* foto que trajo el auto-relleno */
 let sExtras=[];      /* tasas/efectivo que trajo el auto-relleno */
+/* Lee un importe escrito como lo escribe la gente en es-EC y en en-US.
+   La regla "el último separador es el decimal" NO sirve: en "1.186" el punto es de miles.
+   Criterio: si hay punto Y coma, el último de los dos es el decimal. Si solo hay uno,
+   es decimal solo cuando aparece una vez y NO lleva exactamente 3 cifras detrás. */
+function parseMoney(txt){
+  let raw=String(txt||'').trim().replace(/[^\d.,]/g,'');
+  if(!raw)return NaN;
+  const hasDot=raw.indexOf('.')>=0, hasCom=raw.indexOf(',')>=0;
+  let dec=-1;
+  if(hasDot&&hasCom){dec=Math.max(raw.lastIndexOf('.'),raw.lastIndexOf(','));}
+  else if(hasDot||hasCom){
+    const ch=hasDot?'.':',';
+    const veces=raw.split(ch).length-1;
+    const last=raw.lastIndexOf(ch);
+    if(veces===1 && (raw.length-last-1)!==3) dec=last;
+  }
+  raw = dec>=0
+    ? raw.slice(0,dec).replace(/[.,]/g,'')+'.'+raw.slice(dec+1).replace(/[.,]/g,'')
+    : raw.replace(/[.,]/g,'');
+  const v=parseFloat(raw);
+  return isNaN(v)?NaN:v;
+}
 function saveS(){try{localStorage.setItem(SKEY,JSON.stringify(stays));}catch(e){}}
 function nightsOf(bid){return BASES[bid]?BASES[bid].nights:1;}
 const EXTRA_ETQ={tasa:{ic:'🏛️',n:'Tasa turística'},limpieza:{ic:'🧹',n:'Limpieza'},ropa:{ic:'🛏️',n:'Ropa de cama'},consumo:{ic:'💡',n:'Consumos'},deposito:{ic:'🔐',n:'Depósito'},efectivo:{ic:'💵',n:'Pago en efectivo'}};
@@ -805,7 +827,7 @@ function renderStays(){
         <div class="urlrow"><input type="text" id="sUrl" inputmode="url" placeholder="https://…"><button class="sfill" id="sFillBtn" type="button">✨ Rellenar</button></div>
         <div class="sfillmsg" id="sFillMsg"></div>
       </div>
-      <div><label>Precio total de la estancia en USD (${nightsOf(sBase)} noche${nightsOf(sBase)>1?'s':''}) — lo que te muestra Airbnb</label><input type="text" id="sPrice" inputmode="decimal" placeholder="0.00"></div>
+      <div><label>Precio total de la estancia en USD (${nightsOf(sBase)} noche${nightsOf(sBase)>1?'s':''}) — lo que te muestra Airbnb</label><input type="text" id="sPrice" inputmode="decimal" placeholder="0.00"><div class="sfillmsg" id="sPriceEcho"></div></div>
       <div class="chrow">
         <div style="flex:1;min-width:74px"><label>Habitac.</label><input type="text" id="sRooms" inputmode="numeric" placeholder="4"></div>
         <div style="flex:1;min-width:74px"><label>Baños</label><input type="text" id="sBaths" inputmode="numeric" placeholder="3"></div>
@@ -834,16 +856,25 @@ function bindStays(){
     saveS();renderPanel();sbSetElegida(s.base);
   });
   const numOr=id=>{const el=document.getElementById(id);if(!el)return null;const v=(el.value||'').trim().replace(',','.');const n=parseFloat(v);return isNaN(n)?null:n;};
+  /* Eco del precio: enseña cómo se interpretó lo que se escribió. */
+  const pIn=document.getElementById('sPrice'),pEcho=document.getElementById('sPriceEcho');
+  if(pIn&&pEcho){
+    const eco=()=>{
+      const v=parseMoney(pIn.value);
+      if(!pIn.value.trim()){pEcho.className='sfillmsg';pEcho.textContent='';return;}
+      if(isNaN(v)||v<=0){pEcho.className='sfillmsg on warn';pEcho.textContent='No se entiende ese importe.';return;}
+      const ng=nightsOf(sBase);
+      pEcho.className='sfillmsg on ok';
+      pEcho.textContent=`Se guardará ${usd(v)} · ${usd(v/ng)} por noche · ${usd(v/ng/STAYHEADS)} noche/pers.`;
+    };
+    pIn.oninput=eco;eco();
+  }
   const add=document.getElementById('sAddBtn');
   if(add)add.onclick=()=>{
     const name=document.getElementById('sName').value.trim();
     const url=document.getElementById('sUrl').value.trim();
-    /* precio en USD: acepta "1350", "1350.50" y "1,350.50"/"1.350,50" (el último separador es el decimal) */
-    let raw=document.getElementById('sPrice').value.trim().replace(/[^\d.,]/g,'');
-    const lc=Math.max(raw.lastIndexOf(','),raw.lastIndexOf('.'));
-    if(lc>=0){raw=raw.slice(0,lc).replace(/[.,]/g,'')+'.'+raw.slice(lc+1).replace(/[.,]/g,'');}
-    const price=parseFloat(raw);
-    if(!price||price<=0){toast('Pon un precio total válido (en USD).',true);return;}
+    const price=parseMoney(document.getElementById('sPrice').value);
+    if(!price||price<=0||isNaN(price)){toast('Pon un precio total válido (en USD).',true);return;}
     const st={id:'s'+Date.now()+Math.floor(Math.random()*1000),base:sBase,name,url,price,rooms:numOr('sRooms'),baths:numOr('sBaths'),cap:numOr('sCap'),parking:sParking,rating:numOr('sRate'),notes:document.getElementById('sNotes').value.trim(),foto:sFoto,extras:sExtras.slice()};
     stays.push(st);sFoto=null;sExtras=[];saveS();renderPanel();body.scrollTop=0;sbIns('alojamientos',sToRow(st));toast('Casa añadida ✓');
   };
