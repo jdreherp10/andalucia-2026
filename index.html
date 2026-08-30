@@ -506,7 +506,7 @@ const DAYS=[
    {t:'22:00',k:'meal',a:'Cena y tablao de flamenco',n:'Reservar: Casa de la Memoria o La Carbonería'}]},
  {d:'Dom 4 oct',bs:'Sevilla · Itálica',c:'#fb7185',load:['g','Suave'],items:[
    {t:'09:30',k:'drive',a:'Sevilla → Itálica (20 min)'},
-   {t:'10:00',k:'visit',poi:'italica',a:'Itálica: anfiteatro y mosaicos',n:'Gratis para ciudadanos de la UE'},
+   {t:'10:00',k:'visit',poi:'italica',a:'Itálica: anfiteatro y mosaicos',n:'Gratis para ciudadanos de la UE. En domingo cierra a las 15:00: no se puede ir más tarde'},
    {t:'12:30',k:'drive',a:'Volver a Sevilla (20 min)'},
    {t:'13:30',k:'meal',a:'Almuerzo en Sevilla'},
    {t:'16:00',k:'visit',poi:'sevilla',a:'Setas de Sevilla y paseo por el centro'},
@@ -526,7 +526,7 @@ const DAYS=[
    {t:'19:00',k:'visit',poi:'albaicin',a:'Mirador de San Nicolás al atardecer',n:'La Alhambra enfrente, encendida'},
    {t:'21:30',k:'meal',a:'Cena en el Albaicín'}]},
  {d:'Mié 7 oct',bs:'Granada · Alhambra',c:'#a78bfa',load:['y','Lleno'],items:[
-   {t:'08:30',k:'visit',poi:'alhambra',a:'La Alhambra: Alcazaba y Palacios Nazaríes',n:'Los nazaríes tienen hora exacta: llegar 45 min antes'},
+   {t:'08:30',k:'visit',poi:'alhambra',a:'La Alhambra: Alcazaba y Palacios Nazaríes',n:'Los nazaríes tienen hora exacta: llegar 45 min antes. LA HORA MANDA: si solo quedan entradas de tarde, este día y el de las Alpujarras se intercambian; si solo quedan para el 8, se intercambian igual'},
    {t:'12:00',k:'visit',poi:'alhambra',a:'Generalife y sus jardines'},
    {t:'13:30',k:'meal',a:'Almuerzo en el Realejo'},
    {t:'16:00',k:'visit',poi:'granada',a:'Capilla Real y Catedral'},
@@ -557,10 +557,11 @@ const DAYS=[
    {t:'21:00',k:'meal',a:'Cena en San José'}]},
  {d:'Dom 11 oct',bs:'Cabo de Gata → Ronda',c:'#4ade80',load:['r','Intenso'],items:[
    {t:'08:30',k:'drive',a:'San José → Antequera (3 h)',n:'El traslado más largo del viaje: desayuno antes de salir'},
-   {t:'11:30',k:'visit',poi:'torcal',a:'El Torcal: Ruta Verde',n:'1,5 km fáciles entre paredes de caliza. Aparcamiento limitado'},
-   {t:'13:30',k:'visit',poi:'antequera',a:'Dólmenes de Menga y Viera + almuerzo',n:'Alternativa del día: bajar a Málaga (Alcazaba y Picasso) en vez del Torcal'},
-   {t:'16:00',k:'drive',a:'Antequera → Ronda (1 h 05)'},
-   {t:'17:30',k:'visit',poi:'ronda',a:'Check-in y Puente Nuevo al atardecer'},
+   {t:'11:30',k:'visit',poi:'antequera',a:'Dólmenes de Menga y Viera',n:'EN DOMINGO CIERRAN A LAS 15:00 y el último acceso es a las 14:30. Por eso van antes que el Torcal: el Torcal no tiene puertas'},
+   {t:'13:15',k:'meal',a:'Almuerzo en Antequera'},
+   {t:'15:00',k:'visit',poi:'torcal',a:'El Torcal: Ruta Verde',n:'1,5 km fáciles entre paredes de caliza. En domingo el parking de arriba se llena antes del mediodía; por la tarde se vacía, y si sigue lleno se sube en lanzadera (2 € ida y vuelta) desde el aparcamiento inferior'},
+   {t:'17:15',k:'drive',a:'Antequera → Ronda (1 h 05)',n:'Alternativa del día si llueve o el grupo viene cansado: bajar a Málaga (Alcazaba y Picasso) en vez del Torcal'},
+   {t:'18:30',k:'visit',poi:'ronda',a:'Check-in y Puente Nuevo al atardecer',n:'El sol se pone hacia las 19:30'},
    {t:'21:00',k:'meal',a:'Cena en Ronda'}]},
  {d:'Lun 12 oct',bs:'Ronda · pueblos blancos',c:'#4ade80',load:['y','Lleno'],items:[
    {t:'09:30',k:'drive',a:'Ronda → Setenil (35 min)'},
@@ -594,7 +595,7 @@ const DAYS=[
    {t:'12:00',k:'flight',a:'Vuelo a París',n:'Falta decidir: directo desde Sevilla, o vía Madrid si las maletas de París se quedaron allá'}]},
 ];
 const KIC={flight:'✈️',drive:'🚐',visit:'🏛️',beach:'🏖️',meal:'🍽️',rest:'😎',ferry:'⛴️',wine:'🍇'};
-const RESV={0:'🚐 Van de 9 plazas en el aeropuerto de Sevilla: reservarla con antelación, escasean. Ojo con el equipaje de 8 personas en el vuelo desde Madrid.',1:'🕌 Real Alcázar con hora reservada online + tablao de flamenco.',3:'🕌 Mezquita-Catedral: entrada online con hora.',5:'🕌 LA ALHAMBRA ES LO MÁS URGENTE: las entradas de los Palacios Nazaríes se agotan con meses. Reservar en cuanto se decida el viaje, en tickets.alhambra-patronato.es.',9:'🌿 El Torcal tiene aparcamiento limitado. Llegar antes de las 11:00 o subir en lanzadera desde Antequera.',13:'⛽ Devolver la van con el depósito lleno y hacer fotos del estado antes de entregarla.'};
+const RESV={0:'🚐 Van de 9 plazas en el aeropuerto de Sevilla: escasean, reservar YA. Y falta comprar el vuelo Madrid→Sevilla: su hora decide el resto de este día.',1:'🕌 Real Alcázar con hora reservada online + tablao de flamenco (Casa de la Memoria se llena).',3:'🕌 Mezquita-Catedral: entrada online con hora.',5:'🕌 LA ALHAMBRA ES LO MÁS URGENTE. Solo se vende con 3 meses de antelación, así que las de octubre YA están a la venta y los Palacios Nazaríes se agotan. Comprar hoy en tickets.alhambra-patronato.es. Si están agotadas: el Patronato libera las no recogidas el día anterior, y quedan la entrada de Jardines+Alcazaba y la visita nocturna.',9:'🌿 Domingo: los dólmenes cierran a las 15:00 (último acceso 14:30) y el parking del Torcal se llena antes del mediodía. Por eso el día va dólmenes → almuerzo → Torcal por la tarde.',11:'🇪🇸 12 de octubre, fiesta nacional: los pueblos blancos estarán llenos y los restaurantes también. Reservar el almuerzo de Zahara.',13:'⛽ Devolver la van con el depósito lleno y hacer fotos del estado antes de entregarla.'};
 
 /* ============ Fotos (Wikimedia Commons, fijas) ============ */
 const U='https://upload.wikimedia.org/wikipedia/commons/thumb/';
