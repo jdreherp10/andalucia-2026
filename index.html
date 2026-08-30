@@ -165,7 +165,7 @@
     .brand h1{font-size:16px}.brand .sub{font-size:11px}
     #panelBody{padding:12px 13px 26px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
     .legend{display:none}
-    #tabbar{display:grid;grid-template-columns:repeat(6,1fr);position:fixed;left:0;right:0;bottom:0;z-index:1600;background:rgba(8,14,26,.96);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding-bottom:var(--safe-b)}
+    #tabbar{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:0;right:0;bottom:0;z-index:1600;background:rgba(8,14,26,.96);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding-bottom:var(--safe-b)}
     .tab{position:relative;min-height:56px}
     /* dedos, no punteros: todo lo que se toca crece */
     .gform input{font-size:16px;padding:13px 12px}  /* 16px evita el zoom automático de iOS */
@@ -190,6 +190,17 @@
     .ddhd{top:52px}
   }
   @media(max-width:820px) and (display-mode:standalone){#panel{height:min(88dvh,800px)}}
+  /* ===== Auto-relleno del link de un anuncio ===== */
+  .urlrow{display:flex;gap:6px;align-items:stretch}
+  .urlrow input{flex:1;min-width:0}
+  .sfill{flex:0 0 auto;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.4);color:var(--accent);border-radius:9px;padding:0 12px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap}
+  .sfill:hover:not(:disabled){background:rgba(56,189,248,.22)}
+  .sfill:disabled{opacity:.55;cursor:default}
+  .sfillmsg{font-size:11px;line-height:1.45;margin-top:6px;display:none}
+  .sfillmsg.on{display:block}
+  .sfillmsg.ok{color:#86efac}
+  .sfillmsg.warn{color:#fda4af}
+  .sfillmsg.busy{color:var(--muted)}
   /* ===== Deslizar entre días / pestañas ===== */
   #panelBody.swipe-l{animation:swl .22s ease}
   #panelBody.swipe-r{animation:swr .22s ease}
@@ -412,7 +423,9 @@
         <span class="stat"><b>8</b> viajeros</span><span class="stat"><b>~14 h</b> de traslados</span></div>
       <div class="seg" id="seg">
         <button data-view="agenda" class="on">📅 Agenda</button>
-        <button data-view="map">🗺️ Bases</button></div>
+        <button data-view="map">🗺️ Bases</button>
+        <button data-view="stay">🏠 Casas</button>
+        <button data-view="presupuesto">📊 Hospedaje</button></div>
     </div>
     <div id="panelBody"></div>
   </aside>
@@ -421,10 +434,13 @@
 <nav id="tabbar" aria-label="Secciones">
   <button class="tab on" data-view="agenda"><span class="ti">📅</span>Agenda</button>
   <button class="tab" data-view="map"><span class="ti">🗺️</span>Bases</button>
+  <button class="tab" data-view="stay"><span class="ti">🏠</span>Casas</button>
+  <button class="tab" data-view="presupuesto"><span class="ti">📊</span>Hospedaje</button>
 </nav>
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* ============ Utilidades de interfaz (pensadas para el dedo) ============ */
 /* Aviso flotante: reemplaza a alert() para no bloquear el pulgar en el celular. */
@@ -620,11 +636,381 @@ const IMG={
 };
 const imgTag=id=>IMG[id]?`<img src="${IMG[id]}" loading="lazy" onload="this.classList.add('on')" onerror="this.style.display='none'" alt="">`:'';
 
+
+/* ============ Reparto entre núcleos ============
+   Tres bolsillos que se liquidan. Pili y Pilo no pagan: lo suyo se reparte.
+   Regla 1: los gastos de la abuela Pili van mitad Johan / mitad Peter.
+   Regla 2: los de la abuela Pilo, mitad Johan / mitad Klaus.
+   Regla 3: en hospedaje Elina cuenta 0,25 (duerme en la cama de sus papás) -> 7,25 puestos. */
+const UNITS=[
+  {id:'A',name:'Johan & Christel',short:'J&C',color:'#a78bfa'},
+  {id:'B',name:'Peter & Sofía',short:'P&S',color:'#fb7185'},
+  {id:'K',name:'Klaus',short:'Klaus',color:'#2dd4bf'},
+];
+const PEOPLE=[
+  {id:'johan',name:'Johan',w:{A:1}},
+  {id:'christel',name:'Christel',w:{A:1}},
+  {id:'elina',name:'Elina',w:{A:1}},
+  {id:'peter',name:'Peter',w:{B:1}},
+  {id:'sofia',name:'Sofía',w:{B:1}},
+  {id:'klaus',name:'Klaus',w:{K:1}},
+  {id:'pili',name:'Abuela Pili',w:{A:0.5,B:0.5}},
+  {id:'pilo',name:'Abuela Pilo',w:{A:0.5,K:0.5}},
+];
+/* En Andalucía los 8 salen juntos en la van desde Madrid, así que nadie llega tarde.
+   Si alguno se incorporase después, basta añadirlo aquí (p.ej. {peter:4}) y el reparto se ajusta solo. */
+const DIA_IN=2, DIA_OUT=15;
+const LLEGA={};
+const llegaDe=pid=>LLEGA[pid]||DIA_IN;
+function cw(pid,cat){return (pid==='elina'&&cat==='hospedaje')?0.25:1;}
+function presencia(pid,cat,base){
+  const ll=llegaDe(pid);
+  if(ll<=DIA_IN)return 1;
+  if(cat==='carro'){const tot=DIA_OUT-DIA_IN;return Math.max(0,DIA_OUT-ll)/tot;}
+  if(cat==='hospedaje'&&base&&sched[base]){
+    const sc=sched[base];let pres=0;
+    for(let d=sc.from;d<=sc.to;d++)if(d>=ll)pres++;
+    return pres/sc.n;
+  }
+  return 1;
+}
+const pesoDe=(pid,cat,base)=>cw(pid,cat)*presencia(pid,cat,base);
+function repartir(amount,cat,base,forWhom){
+  const out={A:0,B:0,K:0};
+  const who=(forWhom&&forWhom.length)?forWhom:PEOPLE.map(p=>p.id);
+  const ws=who.map(pid=>pesoDe(pid,cat,base));
+  const tot=ws.reduce((a,b)=>a+b,0);
+  if(!(tot>0)||!(amount>0))return out;
+  who.forEach((pid,i)=>{
+    const pe=PEOPLE.find(x=>x.id===pid);if(!pe)return;
+    const share=amount*ws[i]/tot;
+    for(const u in pe.w)out[u]+=share*pe.w[u];
+  });
+  return out;
+}
+const STAYHEADS=PEOPLE.reduce((t,p)=>t+cw(p.id,'hospedaje'),0); /* 7,25 */
+const TAXHEADS=PEOPLE.length; /* personas físicas, para tasas por persona */
+
+/* ---- Cambio EUR->USD ----
+   El precio base se teclea en USD (es lo que muestra Airbnb). Los extras del anuncio
+   vienen en € y se convierten con el cambio del día. */
+let FX=Number(localStorage.getItem('andalucia_fx'))||1.14;
+let FXsrc=localStorage.getItem('andalucia_fx')?'guardado':'aprox.';
+const usd=n=>{const v=Math.round(n*100)/100;return '$'+v.toFixed(2);};
+const eur2usd=e=>e*FX;
+async function loadFX(){
+  const fuentes=[
+    ['https://api.frankfurter.dev/v1/latest?base=EUR&symbols=USD',d=>d&&d.rates&&d.rates.USD],
+    ['https://open.er-api.com/v6/latest/EUR',d=>d&&d.rates&&d.rates.USD],
+  ];
+  for(const [u,pick] of fuentes){
+    try{
+      const r=await fetch(u); if(!r.ok) continue;
+      const v=pick(await r.json());
+      if(v&&v>0.5&&v<2){FX=v;FXsrc='en vivo';try{localStorage.setItem('andalucia_fx',String(v));}catch(e){} if(typeof view!=='undefined')renderPanel(); return;}
+    }catch(e){}
+  }
+}
+
+/* ============ Alojamiento (Casas) ============ */
+const SKEY='andalucia_stays_v1';
+let stays;{const _r=localStorage.getItem(SKEY);if(_r){try{stays=JSON.parse(_r)||[];}catch(e){stays=[];}}else{stays=[];}}
+let sBase=ORDER[0];
+let sParking=true;   /* toggle del formulario */
+let sFoto=null;      /* foto que trajo el auto-relleno */
+let sExtras=[];      /* tasas/efectivo que trajo el auto-relleno */
+function saveS(){try{localStorage.setItem(SKEY,JSON.stringify(stays));}catch(e){}}
+function nightsOf(bid){return BASES[bid]?BASES[bid].nights:1;}
+const EXTRA_ETQ={tasa:{ic:'🏛️',n:'Tasa turística'},limpieza:{ic:'🧹',n:'Limpieza'},ropa:{ic:'🛏️',n:'Ropa de cama'},consumo:{ic:'💡',n:'Consumos'},deposito:{ic:'🔐',n:'Depósito'},efectivo:{ic:'💵',n:'Pago en efectivo'}};
+const UNI_TXT={persona_noche:'/pers./noche',persona:'/persona',noche:'/noche',semana:'/semana',estancia:''};
+/* Coste de un extra según su unidad. Los depósitos NO son coste: se devuelven. */
+function extraCost(x,ng){
+  if(!x||x.cat==='deposito'||x.monto==null)return 0;
+  const m=Number(x.monto);if(isNaN(m))return 0;
+  switch(x.unidad){
+    case 'persona_noche':return m*TAXHEADS*ng;
+    case 'persona':return m*TAXHEADS;
+    case 'noche':return m*ng;
+    case 'semana':return m*Math.ceil(ng/7);
+    default:return m;
+  }
+}
+function extrasTotal(s,ng){return (s.extras||[]).reduce((t,x)=>t+extraCost(x,ng),0);}
+function depositosTotal(s){return (s.extras||[]).filter(x=>x.cat==='deposito'&&x.monto!=null).reduce((t,x)=>t+Number(x.monto||0),0);}
+function stayMetrics(s){const ng=nightsOf(s.base);const extra=eur2usd(extrasTotal(s,ng));const total=(s.price||0)+extra;const perNight=total/ng;return{ng,extra,total,perNight,perPP:perNight/STAYHEADS};}
+function chosenFor(base){const l=stays.filter(s=>s.base===base);return l.find(s=>s.elegida)||l.find(s=>s.reservada)||null;}
+/* Cuántos dormitorios hace falta: J&C&Elina / Peter&Sofía / Klaus / las dos abuelas en twin. */
+const HAB_MIN=4;
+function renderStays(){
+  const pills=ORDER.map(id=>{const s=stays.find(x=>x.base===id&&x.reservada);const n=stays.filter(x=>x.base===id).length;return `<div class="pill ${id===sBase?'on':''}" data-sbase="${id}"><span class="pd" style="background:${BASES[id].color}"></span>${BASES[id].name}${s?' ✅':(n?` · ${n}`:'')}</div>`;}).join('');
+  const b=BASES[sBase],sc=sched[sBase];
+  const list=stays.filter(s=>s.base===sBase);
+  const chosenId=(chosenFor(sBase)||{}).id;
+  /* ⭐ mejor precio entre las que caben los 8 y no están ya reservadas */
+  let bestId=null,bestPP=Infinity;
+  list.filter(s=>!s.reservada&&s.price>0&&(s.cap==null||s.cap>=8)).forEach(s=>{const m=stayMetrics(s);if(m.perPP<bestPP){bestPP=m.perPP;bestId=s.id;}});
+  const sorted=list.slice().sort((a,c)=>(c.reservada?1:0)-(a.reservada?1:0)||stayMetrics(a).perPP-stayMetrics(c).perPP);
+  const cards=sorted.map(s=>{
+    const {ng,extra,total,perNight,perPP}=stayMetrics(s);
+    const capBad=s.cap!=null&&s.cap<8;
+    const habBad=s.rooms!=null&&s.rooms<HAB_MIN;
+    const specs=[];
+    if(s.rooms) specs.push(`<span class="stspec ${habBad?'bad':'good'}">🛏️ ${s.rooms} hab${habBad?` · faltan para ${HAB_MIN}`:''}</span>`);
+    if(s.baths) specs.push(`<span class="stspec">🚿 ${s.baths} baños</span>`);
+    if(s.cap!=null) specs.push(`<span class="stspec ${capBad?'bad':'good'}">👥 ${s.cap}${capBad?' · faltan sitios':''}</span>`);
+    specs.push(`<span class="stspec ${s.parking?'good':'bad'}">🚗 ${s.parking?'parqueo en sitio':'sin parqueo'}</span>`);
+    const dep=depositosTotal(s);
+    const extrasRows=(s.extras||[]).map(x=>{
+      const c=extraCost(x,ng);
+      const et=EXTRA_ETQ[x.cat]||{ic:'💶',n:'Extra en efectivo'};
+      const ut=UNI_TXT[x.unidad]||'';
+      const detalle=x.cat==='deposito'?`${usd(eur2usd(x.monto))} reembolsable`:(c?`${usd(eur2usd(c))}${ut?` · ${usd(eur2usd(x.monto))}${ut}`:''}`:'ver anuncio');
+      return `<div class="stextra ${x.cat==='deposito'?'dep':''}"><span>${et.ic} ${et.n}</span><span>${detalle}</span></div>`;
+    }).join('');
+    const extrasBox=(s.extras&&s.extras.length)?`<div class="stextras">
+        ${extra?`<div class="stextra tot"><span>💵 A pagar en efectivo allá${dep?' (sin depósito)':''}</span><span>+ ${usd(extra)}</span></div>`:''}
+        ${extrasRows}
+        <div class="stextranote">Montos en € del anuncio, convertidos a USD (1 € = ${usd(FX)}).</div>
+      </div>`:'';
+    return `<div class="stcard ${s.reservada?'reserved':''}">
+      ${s.reservada?'<div class="resban">✅ RESERVADA</div>':''}
+      ${s.foto?`<img class="stthumb" src="${s.foto}" alt="" loading="lazy" onerror="this.style.display='none'">`:''}
+      <div class="sttop"><div class="stname">${s.name||'(sin nombre)'}${(!s.reservada&&s.id===bestId&&list.length>1)?'<span class="stbadge">⭐ MEJOR PRECIO</span>':''}${(list.length>1&&s.id===chosenId)?'<span class="stbudget">📊 EN PRESUPUESTO</span>':''}</div>${s.rating?`<span class="strate">★ ${s.rating}</span>`:''}</div>
+      ${s.invite?`<a class="stinvite" href="${s.invite}" target="_blank" rel="noopener">🔗 Ver reserva · invitar a la familia ↗</a>`:''}
+      ${s.price?`<div class="stmetrics">
+        <div class="stmetric hero"><div class="mv">${usd(perPP)}</div><div class="ml">noche / pers.</div></div>
+        <div class="stmetric"><div class="mv">${usd(perNight)}</div><div class="ml">por noche</div></div>
+        <div class="stmetric"><div class="mv">${usd(total)}</div><div class="ml">total${extra?' c/extras':''} · ${ng} N</div></div>
+      </div>`:(s.reservada?'<div class="stnoprice">Reserva confirmada. Falta cargar el precio de la factura.</div>':'')}
+      ${extrasBox}
+      <div class="stspecs">${specs.join('')}</div>
+      ${s.notes?`<div class="stnotes">${s.notes}</div>`:''}
+      ${s.url?`<a class="stlink" href="${s.url}" target="_blank" rel="noopener">Ver anuncio ↗</a>`:''}
+      <button class="stchoose ${s.id===chosenId?'on':''}" data-choose="${s.id}">${s.id===chosenId?'📊 ✓ Cuenta en el presupuesto':'📊 Elegir para el presupuesto'}</button>
+      <button class="gdel" data-sdel="${s.id}">Eliminar</button>
+    </div>`;
+  }).join('');
+  const summary=list.length?`${list.length} opción${list.length>1?'es':''} · mejor precio ${bestId?usd(bestPP)+' /noche/pers.':'—'}`:'Sin opciones todavía';
+  const parkChips=`<div class="gchip paychip ${sParking?'on':''}" style="--c:#4ade80" data-park="1">🚗 Con parqueo</div><div class="gchip paychip ${!sParking?'on':''}" style="--c:#fb7185" data-park="0">🚫 Sin parqueo</div>`;
+  return `<div class="note luggage" style="margin-bottom:11px"><span class="ic">🏠</span><span>Compara casas por base, <b>en USD</b>. La <b>⭐ mejor</b> = menor precio por noche y persona entre las que caben los 8. El precio por persona se reparte entre <b>7,25 puestos</b> (Elina cuenta ¼ en hospedaje). Cambio <b>1 € = ${usd(FX)}</b> (${FXsrc}).</span></div>
+    <div class="note luggage" style="margin-bottom:11px;border-color:rgba(250,204,21,.35)"><span class="ic">🛏️</span><span>Hacen falta <b>4 dormitorios</b>: tú+Christel+Elina · Peter+Sofía · Klaus solo · y las dos abuelas juntas pero <b>en camas separadas</b>. Ojo también con el parqueo: la van son <b>5,5 m de largo × 2,0 m de alto</b>.</span></div>
+    <div class="pills">${pills}</div>
+    <div class="ddhd"><div><div class="ddt" style="color:${b.color}">${b.name}</div><div class="ddb">entra ${sc.from} oct · sale ${sc.to+1} oct · ${sc.n} noche${sc.n>1?'s':''}</div></div></div>
+    <div class="staysum">${summary}</div>
+    ${cards||'<div style="color:var(--muted);font-size:12px;padding:2px 4px 12px">Aún no hay casas para esta base. Añade la primera abajo 👇</div>'}
+    <details class="fold" style="margin-top:6px"><summary>➕ Añadir casa en ${b.name}</summary>
+    <div class="gform">
+      <div><label>Nombre / apodo</label><input type="text" id="sName" placeholder="Villa con piscina · Airbnb"></div>
+      <div><label>Link (Airbnb / Booking)</label>
+        <div class="urlrow"><input type="text" id="sUrl" inputmode="url" placeholder="https://…"><button class="sfill" id="sFillBtn" type="button">✨ Rellenar</button></div>
+        <div class="sfillmsg" id="sFillMsg"></div>
+      </div>
+      <div><label>Precio total de la estancia en USD (${nightsOf(sBase)} noche${nightsOf(sBase)>1?'s':''}) — lo que te muestra Airbnb</label><input type="text" id="sPrice" inputmode="decimal" placeholder="0.00"></div>
+      <div class="chrow">
+        <div style="flex:1;min-width:74px"><label>Habitac.</label><input type="text" id="sRooms" inputmode="numeric" placeholder="4"></div>
+        <div style="flex:1;min-width:74px"><label>Baños</label><input type="text" id="sBaths" inputmode="numeric" placeholder="3"></div>
+        <div style="flex:1;min-width:74px"><label>Capacidad</label><input type="text" id="sCap" inputmode="numeric" placeholder="8"></div>
+      </div>
+      <div><label>Parqueo en sitio</label><div class="chrow">${parkChips}</div></div>
+      <div><label>Rating (opcional)</label><input type="text" id="sRate" inputmode="decimal" placeholder="4,8"></div>
+      <div><label>Notas (opcional)</label><input type="text" id="sNotes" placeholder="A 5 min de la playa, piscina, planta baja para las abuelas…"></div>
+      <button class="gadd" id="sAddBtn">+ Añadir casa a ${b.name}</button>
+    </div></details>
+    <details class="fold"><summary>🔄 Sincronización y respaldo</summary>
+    <div class="gnote" style="margin:0;border:0;border-radius:0"><b>Sincronizado en vivo con la familia.</b> Todos ven las mismas casas al instante. El respaldo de abajo es solo por si acaso (uso offline).
+      <textarea id="sJson" readonly>${JSON.stringify(stays)}</textarea>
+      <div class="gbtns"><button id="sCopy">📋 Copiar respaldo</button><button id="sLoad">📥 Cargar pegado</button></div></div></details>`;
+}
+function bindStays(){
+  const body=document.getElementById('panelBody');
+  body.querySelectorAll('[data-sbase]').forEach(el=>el.onclick=()=>{sBase=el.dataset.sbase;renderPanel();body.scrollTop=0;});
+  body.querySelectorAll('[data-park]').forEach(el=>el.onclick=()=>{sParking=el.dataset.park==='1';body.querySelectorAll('[data-park]').forEach(x=>x.classList.toggle('on',x.dataset.park===(sParking?'1':'0')));});
+  body.querySelectorAll('[data-sdel]').forEach(el=>el.onclick=()=>{if(confirm('¿Eliminar esta casa?')){const sid=el.dataset.sdel;stays=stays.filter(s=>s.id!==sid);saveS();renderPanel();sbDel('alojamientos',sid);}});
+  body.querySelectorAll('[data-choose]').forEach(el=>el.onclick=()=>{
+    const sid=el.dataset.choose;const s=stays.find(x=>x.id===sid);if(!s)return;
+    const wasChosen=(chosenFor(s.base)||{}).id===sid;
+    stays.filter(x=>x.base===s.base).forEach(x=>x.elegida=false);
+    if(!wasChosen)s.elegida=true;
+    saveS();renderPanel();sbSetElegida(s.base);
+  });
+  const numOr=id=>{const el=document.getElementById(id);if(!el)return null;const v=(el.value||'').trim().replace(',','.');const n=parseFloat(v);return isNaN(n)?null:n;};
+  const add=document.getElementById('sAddBtn');
+  if(add)add.onclick=()=>{
+    const name=document.getElementById('sName').value.trim();
+    const url=document.getElementById('sUrl').value.trim();
+    /* precio en USD: acepta "1350", "1350.50" y "1,350.50"/"1.350,50" (el último separador es el decimal) */
+    let raw=document.getElementById('sPrice').value.trim().replace(/[^\d.,]/g,'');
+    const lc=Math.max(raw.lastIndexOf(','),raw.lastIndexOf('.'));
+    if(lc>=0){raw=raw.slice(0,lc).replace(/[.,]/g,'')+'.'+raw.slice(lc+1).replace(/[.,]/g,'');}
+    const price=parseFloat(raw);
+    if(!price||price<=0){toast('Pon un precio total válido (en USD).',true);return;}
+    const st={id:'s'+Date.now()+Math.floor(Math.random()*1000),base:sBase,name,url,price,rooms:numOr('sRooms'),baths:numOr('sBaths'),cap:numOr('sCap'),parking:sParking,rating:numOr('sRate'),notes:document.getElementById('sNotes').value.trim(),foto:sFoto,extras:sExtras.slice()};
+    stays.push(st);sFoto=null;sExtras=[];saveS();renderPanel();body.scrollTop=0;sbIns('alojamientos',sToRow(st));toast('Casa añadida ✓');
+  };
+  /* Auto-relleno: la Edge Function abre el anuncio del lado del servidor y devuelve lo legible. */
+  const fill=document.getElementById('sFillBtn');
+  const fmsg=document.getElementById('sFillMsg');
+  const setMsg=(txt,cls)=>{if(fmsg){fmsg.className='sfillmsg on '+cls;fmsg.textContent=txt;}};
+  if(fill)fill.onclick=async()=>{
+    const u=(document.getElementById('sUrl').value||'').trim();
+    if(!u){setMsg('Pega primero el link del anuncio.','warn');return;}
+    if(!sb){setMsg('Sin conexión con la nube: llena los datos a mano.','warn');return;}
+    const prev=fill.textContent;
+    fill.disabled=true;fill.textContent='⏳';setMsg('Abriendo el anuncio…','busy');
+    let d=null,err=null;
+    try{
+      const invokeBody={url:u};
+      /* Booking bloquea las IPs de datacenter; lo leemos desde ESTE navegador vía jina (IP residencial). */
+      if(/booking\.com/i.test(u)){
+        setMsg('Leyendo Booking (tarda unos segundos)…','busy');
+        try{
+          const ac=new AbortController();const to=setTimeout(()=>ac.abort(),28000);
+          const jr=await fetch('https://r.jina.ai/'+u,{headers:{'Accept':'application/json','X-Return-Format':'markdown'},signal:ac.signal});
+          clearTimeout(to);
+          if(jr.ok){const jd=(await jr.json()).data;if(jd)invokeBody.prefetched={metadata:jd.metadata||{},content:(jd.content||'').slice(0,200000),title:jd.title||'',description:jd.description||''};}
+        }catch(e){}
+      }
+      const r=await sb.functions.invoke('resumen-link',{body:invokeBody});
+      if(r.error){
+        try{const j=await r.error.context.json();err=j&&j.error;}catch(e){}
+        if(!err)err='No se pudo leer el anuncio. Llena los datos a mano.';
+      }else if(r.data&&r.data.error){err=r.data.error;}
+      else d=r.data;
+    }catch(e){err='No se pudo contactar el lector de links.';}
+    fill.disabled=false;fill.textContent=prev;
+    if(err||!d){setMsg(err||'No se pudo leer el anuncio.','warn');return;}
+    const puesto=[];
+    const set=(id,v,etiqueta)=>{
+      if(v===null||v===undefined||v==='')return;
+      const el=document.getElementById(id);
+      if(el&&!el.value.trim()){el.value=String(v).replace('.',',');if(etiqueta)puesto.push(etiqueta);}
+    };
+    if(d.nombre){const el=document.getElementById('sName');if(el&&!el.value.trim()){el.value=d.nombre;puesto.push('nombre');}}
+    set('sRate',d.rating,d.rating?`★ ${d.rating}`:null);
+    set('sRooms',d.habitaciones,d.habitaciones?`${d.habitaciones} hab`:null);
+    set('sBaths',d.banos,d.banos?`${d.banos} baños`:null);
+    set('sCap',d.capacidad,d.capacidad?`capacidad ${d.capacidad}`:null);
+    const notas=[d.camas?`${d.camas} camas`:null,d.descripcion].filter(Boolean).join(' · ');
+    if(notas){const el=document.getElementById('sNotes');if(el&&!el.value.trim()){el.value=notas;puesto.push('notas');}}
+    if(d.foto){sFoto=d.foto;puesto.push('foto');}
+    sExtras=Array.isArray(d.tasas)?d.tasas.filter(x=>x&&x.texto):[];
+    let tasaMsg='';
+    if(sExtras.length){
+      const ng=nightsOf(sBase);
+      const costo=sExtras.reduce((t,x)=>t+extraCost(x,ng),0);
+      const dep=sExtras.filter(x=>x.cat==='deposito'&&x.monto!=null).reduce((t,x)=>t+Number(x.monto||0),0);
+      const partes=[];
+      if(costo)partes.push(`~${usd(eur2usd(costo))} en extras (para ${TAXHEADS} pers. × ${ng} noches)`);
+      if(dep)partes.push(`depósito ${usd(eur2usd(dep))} reembolsable`);
+      tasaMsg=` 💶 Detecté ${partes.join(' + ')||'posibles pagos en efectivo'}: se suman al total al guardar (revísalos en el anuncio).`;
+    }
+    const capMala=d.capacidad!=null&&d.capacidad<8;
+    const habMala=d.habitaciones!=null&&d.habitaciones<HAB_MIN;
+    const base=puesto.length?`✓ ${d.fuente}: ${puesto.join(', ')}. Falta el precio: ponlo tú.`:`Leí ${d.fuente} pero los campos ya tenían datos (no los piso). El precio siempre es manual.`;
+    setMsg(`${base}${capMala?` ⚠️ Capacidad ${d.capacidad}: no caben los 8.`:''}${habMala?` ⚠️ Solo ${d.habitaciones} dormitorios: hacen falta ${HAB_MIN}.`:''}${tasaMsg}`,(capMala||habMala)?'warn':'ok');
+  };
+  const copy=document.getElementById('sCopy');
+  if(copy)copy.onclick=()=>copyTxt(document.getElementById('sJson').value,'Respaldo copiado ✓');
+  const load=document.getElementById('sLoad');
+  if(load)load.onclick=()=>{const t=prompt('Pega aquí el respaldo (JSON) de casas:');if(!t)return;try{const arr=JSON.parse(t);if(Array.isArray(arr)){stays=arr;saveS();renderPanel();}else toast('Formato no válido.',true);}catch(e){toast('No se pudo leer el JSON.',true);}};
+}
+
+/* ============ Presupuesto de hospedaje (proyección) ============ */
+function renderPresupuesto(){
+  let baseSum=0,extraSum=0,totalSum=0,depSum=0,nChosen=0;
+  const nucleo={};UNITS.forEach(u=>nucleo[u.id]=0);
+  const rowsHtml=ORDER.map(id=>{
+    const b=BASES[id],sc=sched[id],ch=chosenFor(id);
+    if(!ch) return `<div class="rcard pend" style="--c:${b.color}">
+      <div class="rhead"><div class="rname">${b.name}</div><div class="rmeta">${sc.n} noche${sc.n>1?'s':''}</div></div>
+      <div class="rpend">⚠️ Aún no eliges casa para esta base.</div>
+      <button class="rgoto" data-goto="${id}">🏠 Elegir casa en ${b.name} →</button></div>`;
+    if(!(ch.price>0)) return `<div class="rcard pend" style="--c:${b.color}">
+      <div class="rhead"><div class="rname">${b.name}</div><div class="rmeta">${sc.n} noche${sc.n>1?'s':''}</div></div>
+      <div class="rpend">⚠️ Elegiste «${ch.name||'(sin nombre)'}»${ch.reservada&&!ch.elegida?' (reservada)':''} pero falta el precio.</div>
+      <button class="rgoto" data-goto="${id}">🏠 Poner precio en ${b.name} →</button></div>`;
+    const m=stayMetrics(ch);
+    const dep=eur2usd(depositosTotal(ch));
+    const split=repartir(m.total,'hospedaje',id);
+    baseSum+=ch.price;extraSum+=m.extra;totalSum+=m.total;depSum+=dep;nChosen++;
+    UNITS.forEach(u=>nucleo[u.id]+=split[u.id]);
+    const extrasRows=(ch.extras||[]).filter(x=>x&&x.cat!=='deposito').map(x=>{
+      const c=extraCost(x,m.ng);if(!c)return '';
+      const et=EXTRA_ETQ[x.cat]||{ic:'💶',n:'Extra en efectivo'};const ut=UNI_TXT[x.unidad]||'';
+      return `<div class="stextra"><span>${et.ic} ${et.n}</span><span>${usd(eur2usd(c))}${ut?` · ${usd(eur2usd(x.monto))}${ut}`:''}</span></div>`;
+    }).join('');
+    const splitHtml=UNITS.map(u=>`<div class="rsp" style="--c:${u.color}"><div class="rspn">${u.short}</div><div class="rspv">${usd(split[u.id])}</div></div>`).join('');
+    return `<div class="rcard" style="--c:${b.color}">
+      <div class="rhead"><div class="rname">${b.name}${ch.reservada?' ✅':''}</div><div class="rmeta">${sc.n} noche${sc.n>1?'s':''}<br>${ch.name||'(sin nombre)'}</div></div>
+      <div class="stextras">
+        <div class="stextra"><span>🏠 Reserva</span><span>${usd(ch.price)}</span></div>
+        ${extrasRows}
+        <div class="stextra tot"><span>Total de la base</span><span>${usd(m.total)}</span></div>
+        ${dep?`<div class="stextra dep"><span>🔐 Depósito reembolsable (aparte)</span><span>${usd(dep)}</span></div>`:''}
+      </div>
+      <div class="rsplit">${splitHtml}</div>
+      ${ch.notes?`<div class="rnote">${ch.notes}</div>`:''}</div>`;
+  }).join('');
+  const ncards=UNITS.map(u=>`<div class="ucard" style="--c:${u.color}"><div class="uname">${u.name}</div>
+    <div class="ubal" style="color:#cfe3f5">${usd(nucleo[u.id])}</div><div class="ulbl">le toca en hospedaje</div>
+    <div class="upaid">${totalSum>0?Math.round(nucleo[u.id]/totalSum*1000)/10:0}% del total${u.id==='A'?' · Elina ¼':''}</div></div>`).join('');
+  const totalBox=`<div class="settlebox"><div class="st">Total hospedaje · ${nChosen} de ${ORDER.length} bases elegidas</div>
+    <div class="settle">Reservas<span>${usd(baseSum)}</span></div>
+    ${extraSum?`<div class="settle">Pagos en efectivo al llegar (limpieza, consumos…)<span>${usd(extraSum)}</span></div>`:''}
+    <div class="settle ok">Total a repartir<span>${usd(totalSum)}</span></div>
+    ${depSum?`<div class="settle" style="color:var(--muted)">Depósitos reembolsables (no se reparten)<span>${usd(depSum)}</span></div>`:''}</div>`;
+  const note=`<div class="note luggage" style="margin-bottom:11px"><span class="ic">📊</span><span>Lo que le toca a cada núcleo en <b>hospedaje</b>, <b>en USD</b>, con las casas que hayas marcado en 🏠 Casas. Reparto por <b>7,25 puestos</b>: Elina cuenta ¼ porque duerme con sus papás, y lo de las abuelas se parte (Pili entre J&C y P&S; Pilo entre J&C y Klaus). <b>Andalucía no cobra tasa turística</b>, así que aquí solo aparecen limpieza, consumos y depósitos si el anuncio los menciona.</span></div>`;
+  const foot=`<div class="rfoot">Para cambiar una casa, ve a <b>🏠 Casas</b> y toca «📊 Elegir para el presupuesto» en la que quieras. Solo cuenta una por base. Los depósitos se muestran aparte porque se devuelven.</div>`;
+  return note+`<div class="gsummary">${ncards}</div>`+totalBox+`<div class="sectionlbl">Desglose por base</div>`+rowsHtml+foot;
+}
+function bindPresupuesto(){
+  const body=document.getElementById('panelBody');
+  body.querySelectorAll('[data-goto]').forEach(el=>el.onclick=()=>{sBase=el.dataset.goto;setView('stay',1);});
+}
+
+/* ============ Supabase (sync en vivo de las casas) ============ */
+const SB_URL='https://pprmiwtbeqsfxznmfcbr.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwcm1pd3RiZXFzZnh6bm1mY2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwOTIzMTYsImV4cCI6MjEwMzY2ODMxNn0.vEWTe04aYOOY9f_Q2pY_S8EztDgKIq1-7n8OyUkQ6pM';
+let sb=null;
+try{ if(window.supabase&&window.supabase.createClient) sb=window.supabase.createClient(SB_URL,SB_KEY); }catch(e){ sb=null; }
+const numN=v=>(v===null||v===undefined||v==='')?null:Number(v);
+const sToRow=s=>({id:s.id,base:s.base,nombre:s.name||'',url:s.url||'',precio:s.price,habitaciones:numN(s.rooms),banos:numN(s.baths),capacidad:numN(s.cap),parqueo:!!s.parking,rating:numN(s.rating),notas:s.notes||'',foto:s.foto||null,extras:Array.isArray(s.extras)?s.extras:[],reservada:!!s.reservada,invite:s.invite||null});
+const sFromRow=r=>({id:r.id,base:r.base,name:r.nombre||'',url:r.url||'',price:Number(r.precio),rooms:numN(r.habitaciones),baths:numN(r.banos),cap:numN(r.capacidad),parking:r.parqueo!==false,rating:numN(r.rating),notes:r.notas||'',foto:r.foto||null,extras:Array.isArray(r.extras)?r.extras:[],reservada:!!r.reservada,invite:r.invite||null,elegida:!!r.elegida});
+let sbReady=false;
+async function sbLoad(){
+  if(!sb) return;
+  try{
+    const a=await sb.from('alojamientos').select('*').order('created_at',{ascending:true});
+    if(a.error){console.warn('Supabase load',a.error);return;}
+    sbReady=true;
+    /* primera vez: si la nube está vacía pero hay algo local, súbelo */
+    if(a.data.length===0 && stays.length){ await sb.from('alojamientos').insert(stays.map(sToRow)); }
+    else { stays=a.data.map(sFromRow); saveS(); }
+    renderPanel();
+  }catch(e){ console.warn('Supabase load falló',e); }
+}
+async function sbRefresh(){
+  if(!sb||!sbReady) return;
+  try{const {data,error}=await sb.from('alojamientos').select('*').order('created_at',{ascending:true});
+    if(!error){stays=data.map(sFromRow);saveS();if(view==='stay'||view==='presupuesto')renderPanel();}}catch(e){}
+}
+function sbSubscribe(){
+  if(!sb) return;
+  try{ sb.channel('andalucia-rt').on('postgres_changes',{event:'*',schema:'public',table:'alojamientos'},()=>sbRefresh()).subscribe(); }catch(e){}
+}
+async function sbIns(table,row){ if(!sb||!sbReady) return; try{const {error}=await sb.from(table).insert(row);if(error){console.warn('insert',table,error);toast('No se pudo guardar en la nube. Quedó solo en este dispositivo.',true);}}catch(e){} }
+async function sbUpd(table,id,patch){ if(!sb||!sbReady) return; try{const {error}=await sb.from(table).update(patch).eq('id',id);if(error)console.warn('update',table,error);}catch(e){} }
+async function sbDel(table,id){ if(!sb||!sbReady) return; try{await sb.from(table).delete().eq('id',id);}catch(e){} }
+async function sbSetElegida(base){ if(!sb||!sbReady) return; try{ await Promise.all(stays.filter(s=>s.base===base).map(s=>sb.from('alojamientos').update({elegida:!!s.elegida}).eq('id',s.id))); }catch(e){} }
+
 /* ============ Mapa ============ */
 const poiBase={};Object.entries(BASES).forEach(([bid,b])=>{poiBase[bid]=bid;b.trips.forEach(t=>poiBase[t]=bid);});
 const colorOf=id=>BASES[poiBase[id]]?BASES[poiBase[id]].color:'#94a3b8';
 const map=L.map('map',{zoomControl:true}).setView([37.0,-4.6],8);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'&copy; OpenStreetMap &copy; CARTO',maxZoom:19}).addTo(map);
+/* CARTO empezó a exigir API key (devuelve 200 pero la tesela lleva marca de agua).
+   Esri Dark Gray sigue siendo libre y sin clave: base + capa de nombres encima. */
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',{attribution:'Teselas &copy; Esri &copy; OpenStreetMap',maxZoom:16}).addTo(map);
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}',{maxZoom:16,pane:'overlayPane'}).addTo(map);
 const layerRoute=L.layerGroup().addTo(map),layerSpur=L.layerGroup().addTo(map),layerTime=L.layerGroup().addTo(map),layerPoi=L.layerGroup().addTo(map);
 const show={spur:true,sug:true,time:true};
 /* Día de hoy dentro del viaje (-1 si aún no empezó o ya terminó). Marca la píldora y abre ahí. */
@@ -725,8 +1111,10 @@ function centerActivePill(){
 }
 function renderPanel(){
   const body=document.getElementById('panelBody');
-  body.innerHTML = view==='agenda'?renderAgendaView():renderMapView();
+  body.innerHTML = view==='agenda'?renderAgendaView():view==='stay'?renderStays():view==='presupuesto'?renderPresupuesto():renderMapView();
   body.querySelectorAll('[data-poi]').forEach(el=>el.addEventListener('click',e=>{e.stopPropagation();flyTo(el.getAttribute('data-poi'));if(window.innerWidth<=820)closeSheet();}));
+  if(view==='stay'){bindStays();return;}
+  if(view==='presupuesto'){bindPresupuesto();return;}
   if(view==='agenda'){
     body.querySelectorAll('.pill').forEach(el=>el.onclick=()=>{const n=+el.dataset.day;const dir=n>agDay?1:-1;agDay=n;animateSwipe(dir);renderPanel();body.scrollTop=0;});
     const pv=document.getElementById('dprev'),nx=document.getElementById('dnext');
@@ -745,7 +1133,7 @@ document.getElementById('legend').innerHTML=
   +`<div class="row" style="margin-top:6px;border-top:1px solid #223049;padding-top:7px"><span class="ln"></span>Traslado en van</div>`
   +`<div class="row"><span class="ln dash"></span>Excursión de día</div>`;
 /* ============ Navegación y gestos ============ */
-const VIEWS=['agenda','map','stay','gastos','presupuesto','carro'];
+const VIEWS=['agenda','map','stay','presupuesto'];
 const panel=document.getElementById('panel');
 const pbody=document.getElementById('panelBody');
 const phead=document.getElementById('panelHead');
@@ -883,6 +1271,7 @@ function fitAll(){
 }
 drawMap();renderPanel();
 setTimeout(()=>{measureSheet();snapTo('full',true);map.invalidateSize();fitAll();},220);
+loadFX();sbLoad();sbSubscribe();
 </script>
 </body>
 </html>
