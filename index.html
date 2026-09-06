@@ -420,7 +420,7 @@
         <div><h1>Andalucía 2026</h1><div class="sub">Viaje familiar · 2–15 oct · en van desde Madrid</div></div></div>
       <div class="stats">
         <span class="stat"><b>13</b> noches</span><span class="stat"><b>6</b> bases</span>
-        <span class="stat"><b>8</b> viajeros</span><span class="stat"><b>~14 h</b> de traslados</span></div>
+        <span class="stat"><b>8</b> viajeros</span><span class="stat"><b>~16 h</b> de traslados</span></div>
       <div class="seg" id="seg">
         <button data-view="agenda" class="on">📅 Agenda</button>
         <button data-view="map">🗺️ Bases</button>
@@ -460,8 +460,8 @@ function copyTxt(txt,msg){
 const BASES = {
   cordoba:{name:'Córdoba',color:'#e9b949',nights:1,lat:37.8790,lng:-4.7794,blurb:'Parada que parte el viaje desde Madrid: se llega de noche y el sábado la Mezquita se ve temprano y vacía.',trips:['mezquita']},
   sevilla:{name:'Sevilla',color:'#fb7185',nights:3,lat:37.3891,lng:-5.9845,blurb:'La ciudad grande del viaje: Alcázar, catedral, Triana y las azoteas.',trips:['alcazar','plazaespana','italica']},
-  ronda:{name:'Ronda',color:'#4ade80',nights:2,lat:36.7420,lng:-5.1670,blurb:'El Tajo y el Puente Nuevo, con los pueblos blancos de la sierra a media hora.',trips:['setenil','zaharasierra','grazalema','majaceite']},
-  costa:{name:'Costa Tropical',color:'#2dd4bf',nights:5,lat:36.7290,lng:-3.7290,blurb:'Los cinco días de parar. Base en La Herradura, justo entre Málaga y Almería: calas de agua turquesa, pueblo con vida y nada obligatorio que hacer.',trips:['almunecar','cantarrijan','maro','nerja','frigiliana','alpujarras']},
+  ronda:{name:'Ronda',color:'#4ade80',nights:2,lat:36.7420,lng:-5.1670,blurb:'El Tajo y el Puente Nuevo, con los pueblos blancos de la sierra a media hora.',trips:['setenil','zaharasierra','grazalema','majaceite','bodega']},
+  costa:{name:'Costa Tropical',color:'#2dd4bf',nights:5,lat:36.7290,lng:-3.7290,blurb:'Los cinco días de parar. Base en La Herradura, justo entre Málaga y Almería: calas de agua turquesa, pueblo con vida y nada obligatorio que hacer.',trips:['almunecar','cantarrijan','maro','nerja','frigiliana','salobrena','alpujarras']},
   granada:{name:'Granada',color:'#a78bfa',nights:1,lat:37.1773,lng:-3.5986,blurb:'La Alhambra y el Albaicín. Una sola noche, pero se llega a mediodía: la costa está a 1 h 10.',trips:['alhambra','albaicin']},
   madrid:{name:'Madrid · Barajas',color:'#94a3b8',nights:1,lat:40.4936,lng:-3.5668,blurb:'Última noche cerca del aeropuerto: se devuelve la van por la mañana y se vuela a París sin jugársela con 4 h 20 de carretera el mismo día.',trips:[]},
 };
@@ -492,11 +492,15 @@ const POI = {
   alpujarras:{emoji:'⛰️',name:'Las Alpujarras',sug:true,lat:36.9430,lng:-3.3660,visit:'1 día',wt:'Pampaneira',wten:'Pampaneira',desc:'Pampaneira, Bubión y Capileira colgados del barranco de Poqueira. Excursión opcional desde la costa, para quien quiera montaña.'},
   granada:{emoji:'🏛️',name:'Granada',lat:37.1773,lng:-3.5986,visit:'1 día',wt:'Granada',wten:'Granada',desc:'Catedral y Capilla Real, la Alcaicería y el tapeo del centro.'},
   alhambra:{emoji:'🕌',name:'La Alhambra',lat:37.1761,lng:-3.5881,visit:'Medio día',wt:'Alhambra',wten:'Alhambra',desc:'Palacios nazaríes, Alcazaba y Generalife. Entrada con hora fija: hay que reservarla con meses.'},
+  bodega:{emoji:'🍇',name:'Bodega Joaquín Fernández',lat:36.7570,lng:-5.1450,visit:'1 h 30',wt:'Ronda',wten:'Ronda',desc:'Bodega ecológica en la finca Los Frutales, a 3 km de Ronda. 20 € por persona: viñedo, bodega, proceso con guía y cata de 4 vinos con ibéricos. Hay que reservar.'},
+  almazara:{emoji:'🫒',name:'LA Almazara – LA Organic',stop:true,lat:36.7600,lng:-5.1100,visit:'1 h 30',wt:'Ronda',wten:'Ronda',desc:'La almazara que diseñó Philippe Starck, en la A-367 km 39,5 (carretera Ronda–Ardales), justo de camino a Antequera. Abre a las 10:00. 25 € por persona: museo, molino, paseo por el olivar ecológico y cata. En octubre la molienda aún no ha empezado: el molino se ve parado.'},
+  salobrena:{emoji:'🏰',name:'Salobreña',lat:36.7440,lng:-3.5870,visit:'Media tarde',wt:'Salobreña',wten:'Salobreña',desc:'Peñón blanco sobre la vega de caña de azúcar, coronado por el castillo árabe mejor conservado de Andalucía. Medina, barrio del Albaicín y miradores. A 25 min de La Herradura.'},
+  salamanca:{emoji:'🧳',name:'Barrio Salamanca (Madrid)',stop:true,lat:40.4300,lng:-3.6800,visit:'1 h',wt:'Barrio de Salamanca',wten:'Salamanca (Madrid)',desc:'Casa del hermano de Johan: aquí están guardadas las maletas de la feria. Zona SER entera, difícil de aparcar con una van de 9 plazas. El Retiro y el Mercado de la Paz están al lado.'},
   albaicin:{emoji:'🌇',name:'Albaicín y San Nicolás',lat:37.1810,lng:-3.5928,visit:'2 h',wt:'Albaicín',wten:'Albaicín',desc:'El mirador de San Nicolás al atardecer, con la Alhambra enfrente y Sierra Nevada detrás.'},
 };
 
 const SPINE=[['madrid','cordoba','4 h'],['cordoba','sevilla','1 h 30'],['sevilla','ronda','2 h'],['ronda','antequera','1 h 05'],['antequera','costa','1 h 45'],['costa','granada','1 h 10'],['granada','madrid','4 h 20']];
-const SPURS=[['cordoba','mezquita','5 min'],['sevilla','alcazar','5 min'],['sevilla','plazaespana','10 min'],['sevilla','italica','20 min'],['ronda','setenil','35 min'],['setenil','zaharasierra','45 min'],['zaharasierra','grazalema','30 min'],['grazalema','majaceite','25 min'],['antequera','torcal','25 min'],['antequera','malaga','50 min'],['costa','almunecar','15 min'],['costa','cantarrijan','10 min'],['costa','maro','20 min'],['maro','nerja','10 min'],['nerja','frigiliana','15 min'],['costa','alpujarras','1 h 20'],['granada','alhambra','15 min'],['granada','albaicin','15 min']];
+const SPURS=[['cordoba','mezquita','5 min'],['sevilla','alcazar','5 min'],['sevilla','plazaespana','10 min'],['sevilla','italica','20 min'],['ronda','setenil','35 min'],['setenil','zaharasierra','45 min'],['zaharasierra','grazalema','30 min'],['grazalema','majaceite','25 min'],['antequera','torcal','25 min'],['antequera','malaga','50 min'],['costa','almunecar','15 min'],['costa','cantarrijan','10 min'],['costa','maro','20 min'],['maro','nerja','10 min'],['nerja','frigiliana','15 min'],['costa','alpujarras','1 h 20'],['granada','alhambra','15 min'],['granada','albaicin','15 min'],['ronda','bodega','10 min'],['ronda','almazara','15 min'],['almazara','antequera','1 h'],['costa','salobrena','25 min'],['madrid','salamanca','25 min']];
 
 /* ============ Agenda ============ */
 const DAYS=[
@@ -525,45 +529,50 @@ const DAYS=[
    {t:'09:00',k:'visit',poi:'alcazar',a:'Real Alcázar (entrada con hora)',n:'Se agota: reservar online con antelación'},
    {t:'12:00',k:'visit',poi:'sevilla',a:'Catedral y subida a la Giralda',n:'Se deja para hoy porque en domingo la catedral casi no abre a visitas'},
    {t:'14:00',k:'meal',a:'Almuerzo en Santa Cruz'},
-   {t:'16:30',k:'rest',a:'Siesta o azotea con vistas'},
+   {t:'16:30',k:'rest',a:'Siesta o azotea con vistas',n:'Si el cuerpo pide algo suave: un paseo en barco por el Guadalquivir es una hora sentados y sin esfuerzo'},
    {t:'19:00',k:'visit',poi:'sevilla',a:'Paseo por el centro y el Guadalquivir'},
    {t:'22:00',k:'meal',a:'Cena y tablao de flamenco',n:'Reservar: Casa de la Memoria o La Carbonería'}]},
- {d:'Mar 6 oct',bs:'Sevilla → Ronda',c:'#4ade80',load:['g','Traslado'],items:[
-   {t:'10:00',k:'visit',poi:'sevilla',a:'Mañana suelta en Sevilla',n:'Lo que haya quedado pendiente, sin prisa'},
-   {t:'12:30',k:'drive',a:'Sevilla → Ronda (2 h)'},
-   {t:'15:00',k:'meal',a:'Almuerzo en Ronda y check-in'},
-   {t:'17:30',k:'visit',poi:'ronda',a:'Puente Nuevo y los Jardines de Cuenca al atardecer'},
+ {d:'Mar 6 oct',bs:'Sevilla → Ronda · vino',c:'#4ade80',load:['g','Traslado'],items:[
+   {t:'10:00',k:'drive',a:'Sevilla → Ronda (2 h)'},
+   {t:'12:00',k:'visit',poi:'ronda',a:'Check-in en Ronda'},
+   {t:'13:00',k:'meal',a:'Almuerzo en Ronda'},
+   {t:'15:30',k:'wine',poi:'bodega',a:'Bodega Joaquín Fernández',n:'20 € por persona, 90 min. Viñedo, bodega y cata de 4 vinos con ibéricos. Ecológica, a 3 km del pueblo. HAY QUE RESERVAR'},
+   {t:'17:30',k:'visit',poi:'ronda',a:'Plaza de Toros y museo taurino',n:'Abre 10:00–19:00 en octubre. Los Baños Árabes cierran a las 18:00 y hoy no caben: son 20 min de visita, se sueltan sin drama'},
+   {t:'19:00',k:'visit',poi:'ronda',a:'Puente Nuevo y Jardines de Cuenca al atardecer',n:'El sol se pone a las 19:55. Se puede bajar al Tajo por el camino de los molinos para ver el puente desde abajo'},
    {t:'21:00',k:'meal',a:'Cena en Ronda'}]},
- {d:'Mié 7 oct',bs:'Ronda · pueblos blancos',c:'#4ade80',load:['y','Lleno'],items:[
+ {d:'Mié 7 oct',bs:'Pueblos blancos y el Majaceite',c:'#4ade80',load:['y','Lleno'],items:[
    {t:'09:30',k:'drive',a:'Ronda → Setenil (35 min)'},
    {t:'10:00',k:'visit',poi:'setenil',a:'Setenil de las Bodegas: las calles bajo la roca'},
-   {t:'11:45',k:'drive',a:'Setenil → Zahara de la Sierra (45 min)'},
-   {t:'12:30',k:'visit',poi:'zaharasierra',a:'Zahara de la Sierra: torre nazarí y embalse'},
-   {t:'14:00',k:'meal',a:'Almuerzo en Zahara'},
-   {t:'15:30',k:'drive',a:'Puerto de las Palomas → Grazalema (30 min)',n:'Carretera de montaña con miradores; parar arriba'},
-   {t:'16:00',k:'visit',poi:'grazalema',a:'Grazalema: pueblo y sierra',n:'Si sobra tiempo: sendero del río Majaceite, 5 km llanos y a la sombra'},
-   {t:'18:00',k:'drive',a:'Volver a Ronda (35 min)'},
+   {t:'11:30',k:'drive',a:'Setenil → Zahara de la Sierra (45 min)'},
+   {t:'12:15',k:'visit',poi:'zaharasierra',a:'Zahara de la Sierra: torre nazarí y embalse'},
+   {t:'13:30',k:'meal',a:'Almuerzo en Zahara'},
+   {t:'14:45',k:'drive',a:'Puerto de las Palomas → El Bosque (50 min)',n:'Parada en el mirador del puerto. Hoy se pasa por Grazalema sin bajarse: o tres pueblos o el sendero, y toca el sendero'},
+   {t:'15:45',k:'hike',poi:'majaceite',a:'Sendero del río Majaceite',n:'Llano, todo junto al río y a la sombra. Ida y vuelta desde El Bosque, lo que pida el cuerpo. NO necesita autorización previa, a diferencia del resto de senderos de Grazalema'},
+   {t:'17:30',k:'drive',a:'El Bosque → Ronda (1 h)'},
    {t:'21:00',k:'meal',a:'Cena en Ronda'}]},
- {d:'Jue 8 oct',bs:'Ronda → Costa Tropical',c:'#2dd4bf',load:['y','Traslado'],items:[
-   {t:'08:45',k:'visit',poi:'ronda',a:'Plaza de toros y Baños Árabes, rápido'},
-   {t:'10:15',k:'drive',a:'Ronda → Antequera (1 h 05)'},
-   {t:'11:30',k:'visit',poi:'antequera',a:'Dólmenes de Menga y Viera',n:'En jueves abren hasta las 18:00, así que hoy no hay carrera contra el reloj'},
-   {t:'13:00',k:'meal',a:'Almuerzo en Antequera'},
-   {t:'14:30',k:'visit',poi:'torcal',a:'El Torcal: Ruta Verde',n:'1,5 km fáciles entre paredes de caliza. Entre semana el parking de arriba suele tener sitio; si está lleno, lanzadera de 2 € desde abajo'},
-   {t:'16:45',k:'drive',a:'Antequera → La Herradura (1 h 45)',n:'Si el grupo prefiere ciudad, Málaga queda justo de paso'},
-   {t:'18:45',k:'visit',poi:'costa',a:'Check-in en La Herradura',n:'Aquí no se deshacen las maletas para dos noches: son cinco'},
+ {d:'Jue 8 oct',bs:'Aceite, dólmenes y el Torcal',c:'#2dd4bf',load:['r','Intenso'],items:[
+   {t:'09:30',k:'drive',a:'Salida de Ronda por la A-367',n:'El día más cargado del viaje: tres paradas y 3 h de volante. Salir puntual importa'},
+   {t:'10:00',k:'oil',poi:'almazara',a:'LA Almazara – LA Organic',n:'25 € por persona, 1 h 30. Abre a las 10:00, así que entráis los primeros. Museo, molino, paseo por el olivar ecológico y cata. RESERVAR'},
+   {t:'11:45',k:'drive',a:'Almazara → Antequera (1 h)'},
+   {t:'12:45',k:'visit',poi:'antequera',a:'Dólmenes de Menga y Viera',n:'En jueves abren hasta las 18:00. Si vais retrasados, ESTO es lo que se suelta: están a 5 min de la autovía'},
+   {t:'13:45',k:'meal',a:'Almuerzo en Antequera'},
+   {t:'15:00',k:'drive',a:'Antequera → El Torcal (25 min)',n:'Entre semana el parking de arriba suele tener sitio; si está lleno, lanzadera de 2 € desde abajo'},
+   {t:'15:30',k:'hike',poi:'torcal',a:'El Torcal: Ruta Amarilla',n:'3 km circulares, 2 h, dificultad media, por dentro del laberinto de caliza. La Ruta Verde (1,5 km, 45 min) es el plan B en el mismo sitio si el cuerpo no da'},
+   {t:'17:45',k:'drive',a:'El Torcal → La Herradura (1 h 50)'},
+   {t:'19:35',k:'visit',poi:'costa',a:'Check-in en La Herradura',n:'Aquí no se deshacen las maletas para dos noches: son cinco'},
    {t:'21:00',k:'meal',a:'Primera cena en el paseo marítimo'}]},
- {d:'Vie 9 oct',bs:'Costa Tropical · playa',c:'#2dd4bf',load:['g','Playa'],items:[
-   {t:'—',k:'rest',a:'Día sin agenda',n:'El primero de los cinco: no hay nada que ver, ese es el punto'},
+ {d:'Vie 9 oct',bs:'Playa, Almuñécar y Salobreña',c:'#2dd4bf',load:['g','Playa'],items:[
+   {t:'—',k:'rest',a:'Mañana sin agenda',n:'Después del jueves, hoy no hay nada obligatorio hasta la tarde'},
    {t:'11:00',k:'beach',poi:'costa',a:'Playa de La Herradura, a pie desde la casa',n:'Bahía cerrada entre dos montes: agua tranquila, perfecta para Elina'},
    {t:'14:30',k:'meal',a:'Espetos de sardina en un chiringuito',n:'Se asan en la barca, a la brasa, a pie de arena'},
-   {t:'18:00',k:'visit',a:'Paseo hasta el Peñón del Santo o la Punta de la Mona'},
-   {t:'21:00',k:'meal',a:'Cena en el pueblo'}]},
- {d:'Sáb 10 oct',bs:'Costa · Nerja y Frigiliana',c:'#2dd4bf',load:['g','Suave'],items:[
+   {t:'17:00',k:'visit',poi:'almunecar',a:'Almuñécar: castillo de San Miguel y acueducto romano',n:'A 15 min'},
+   {t:'18:30',k:'visit',poi:'salobrena',a:'Salobreña al atardecer',n:'A 14 km de Almuñécar. El castillo árabe mejor conservado de Andalucía, sobre la vega de caña. El sol se pone a las 19:47'},
+   {t:'21:00',k:'meal',a:'Cena de vuelta en La Herradura'}]},
+ {d:'Sáb 10 oct',bs:'Nerja y Frigiliana',c:'#2dd4bf',load:['g','Suave'],items:[
    {t:'10:00',k:'drive',a:'La Herradura → Nerja (25 min)'},
-   {t:'10:30',k:'visit',poi:'nerja',a:'Balcón de Europa y playa de Burriana'},
+   {t:'10:30',k:'visit',poi:'nerja',a:'Balcón de Europa y playa de Burriana',n:'Dos opcionales si apetece: la Cueva de Nerja (más de 400 escalones, sin ascensores) o el río Chíllar, que se camina dentro del agua por un desfiladero. En octubre el agua está fría'},
    {t:'13:30',k:'meal',a:'Almuerzo en Burriana'},
-   {t:'16:00',k:'visit',poi:'frigiliana',a:'Frigiliana: el casco morisco',n:'Calles empinadas y encaladas; con carriola no se puede, mejor cargar a Elina'},
+   {t:'16:00',k:'visit',poi:'frigiliana',a:'Frigiliana: el casco morisco',n:'Calles empinadas y encaladas. Con el canguro, sin problema'},
    {t:'18:30',k:'drive',a:'Volver a La Herradura (35 min)'},
    {t:'21:00',k:'meal',a:'Cena en casa o en el paseo'}]},
  {d:'Dom 11 oct',bs:'Costa · calas',c:'#2dd4bf',load:['g','Playa'],items:[
@@ -571,39 +580,49 @@ const DAYS=[
    {t:'14:00',k:'meal',a:'Almuerzo en el chiringuito de la cala'},
    {t:'16:30',k:'beach',poi:'maro',a:'Acantilados de Maro-Cerro Gordo',n:'Opcional y muy recomendable: salida en kayak o en barco desde Nerja hasta la cascada que cae al mar. Reservar con un día'},
    {t:'20:30',k:'meal',a:'Cena en La Herradura'}]},
- {d:'Lun 12 oct',bs:'Costa · fiesta nacional',c:'#2dd4bf',load:['g','Playa'],items:[
-   {t:'—',k:'rest',a:'Hoy es fiesta nacional en España',n:'Todo lo turístico estará lleno: el mejor día del viaje para no moverse de la playa'},
-   {t:'11:00',k:'visit',poi:'almunecar',a:'Almuñécar: castillo de San Miguel y acueducto romano',n:'A 15 min. Si prefieren no salir de la casa, este día se borra entero sin culpa'},
-   {t:'14:30',k:'meal',a:'Almuerzo en Almuñécar'},
-   {t:'17:00',k:'beach',poi:'costa',a:'Última tarde de playa'},
+ {d:'Lun 12 oct',bs:'Las Alpujarras',c:'#2dd4bf',load:['y','Lleno'],items:[
+   {t:'08:30',k:'drive',a:'La Herradura → Capileira (1 h 30)',n:'Hoy es fiesta nacional: la costa se llena de gente local y la montaña no. Por eso se sube'},
+   {t:'10:00',k:'visit',poi:'alpujarras',a:'Capileira, el más alto de los tres',n:'A 1.436 m. Puede haber 12–15 °C cuando en la playa hay 25: llevar abrigo. Casas bereberes de techo plano, tinaos y telares de jarapas'},
+   {t:'11:30',k:'hike',poi:'alpujarras',a:'Sendero corto al barranco de Poqueira',n:'Salen varios desde el pueblo; preguntad allí cuál está en condiciones. Bajada y subida, no llano'},
+   {t:'13:30',k:'meal',a:'Almuerzo en Bubión',n:'Jamón de Trevélez y queso de cabra'},
+   {t:'15:00',k:'visit',poi:'alpujarras',a:'Bubión y Pampaneira, bajando',n:'Entre pueblo y pueblo se va en coche: caminar entre ellos es senderismo de verdad. Pampaneira, el más comercial, para el final'},
+   {t:'17:00',k:'drive',a:'Regreso a La Herradura (1 h 30)'},
    {t:'21:00',k:'meal',a:'Cena de despedida de la costa'}]},
- {d:'Mar 13 oct',bs:'Costa → Granada',c:'#a78bfa',load:['g','Suave'],items:[
+ {d:'Mar 13 oct',bs:'Costa → Granada · Alhambra',c:'#a78bfa',load:['y','Lleno'],items:[
    {t:'10:00',k:'drive',a:'La Herradura → Granada (1 h 10)',n:'El traslado más corto del viaje'},
    {t:'11:30',k:'visit',poi:'granada',a:'Check-in en Granada',n:'Dormir cerca del centro: el Albaicín es ZTL y la van no entra'},
-   {t:'13:30',k:'meal',a:'Almuerzo en el Realejo'},
-   {t:'16:00',k:'visit',poi:'granada',a:'Capilla Real, Catedral y la Alcaicería'},
-   {t:'19:00',k:'visit',poi:'albaicin',a:'Mirador de San Nicolás al atardecer',n:'La Alhambra enfrente, encendida'},
+   {t:'12:30',k:'meal',a:'Almuerzo en el Realejo'},
+   {t:'15:00',k:'visit',poi:'alhambra',a:'Alhambra: Generalife, Alcazaba y jardines',n:'ENTRADA COMPRADA: la de Jardines, Generalife y Alcazaba, SIN Palacios Nazaríes, que estaban agotados del 1 al 24 de octubre. Son 2 h 30–3 h. Si aparecen los Nazaríes por agencia o por cancelación, encajan aquí mismo'},
+   {t:'18:30',k:'visit',poi:'albaicin',a:'Mirador de San Nicolás al atardecer',n:'El sol se pone a las 19:41. La Alhambra enfrente, encendida'},
    {t:'21:00',k:'meal',a:'Tapeo por calle Navas',n:'En Granada la tapa va incluida con la bebida'}]},
- {d:'Mié 14 oct',bs:'Granada → Madrid',c:'#94a3b8',load:['r','Intenso'],items:[
-   {t:'08:30',k:'visit',poi:'alhambra',a:'La Alhambra: Alcazaba, Palacios Nazaríes y Generalife',n:'LA HORA DE LA ENTRADA MANDA EL DÍA. Si solo hay slot para la tarde del 13, se hace ayer y hoy queda la mañana libre; lo importante es no salir a Madrid más tarde de las 15:30'},
-   {t:'13:30',k:'meal',a:'Almuerzo en Granada'},
-   {t:'15:30',k:'drive',a:'Granada → Madrid (4 h 20)',n:'Parar en Despeñaperros a estirar; se llega de noche'},
-   {t:'20:00',k:'visit',poi:'madrid',a:'Check-in cerca de Barajas',n:'Dormir junto al aeropuerto, no en el centro: mañana hay que devolver la van y volar'},
-   {t:'21:30',k:'meal',a:'Cena de cierre del viaje'}]},
+ {d:'Mié 14 oct',bs:'Granada → Madrid',c:'#94a3b8',load:['y','Traslado'],items:[
+   {t:'09:30',k:'visit',poi:'granada',a:'Capilla Real, Catedral y la Alcaicería',n:'Mañana entera y sin prisa: hoy ya no hay nada con hora fija, y mañana el vuelo es a las 18:30'},
+   {t:'13:00',k:'meal',a:'Almuerzo de despedida en Granada'},
+   {t:'15:00',k:'drive',a:'Granada → Madrid (4 h 20)',n:'Parar en Despeñaperros a estirar; se llega de noche'},
+   {t:'20:15',k:'visit',poi:'madrid',a:'Check-in junto a Barajas',n:'Junto al aeropuerto, no en el centro: mañana hay que devolver la van y volar'},
+   {t:'21:00',k:'meal',a:'Cena de cierre del viaje'}]},
  {d:'Jue 15 oct',bs:'Madrid → París',c:'#94a3b8',load:['g','Salida'],items:[
-   {t:'09:00',k:'drive',poi:'madrid',a:'Devolver la van en Barajas (depósito lleno)',n:'Llenar en una gasolinera cercana al aeropuerto y hacer fotos del estado antes de entregarla'},
-   {t:'11:00',k:'rest',a:'Espera en el aeropuerto según la hora del vuelo'},
-   {t:'—',k:'flight',a:'Vuelo Madrid → París',n:'Falta comprarlo. Aquí se recogen las maletas de la feria que se quedaron en Madrid'}]},
+   {t:'10:00',k:'rest',a:'Desayuno y check-out sin prisa',n:'El vuelo es a las 18:30: hoy nadie madruga'},
+   {t:'10:30',k:'drive',a:'Hotel → Barrio Salamanca (25 min)'},
+   {t:'11:00',k:'visit',poi:'salamanca',a:'Recoger las maletas de la feria en casa del hermano',n:'PEDIRLE QUE LAS BAJE AL PORTAL. Barrio Salamanca es zona SER entera y aparcar una van de 9 plazas ahí es un vía crucis; con las maletas en la acera son 10 min con las luces puestas'},
+   {t:'12:00',k:'visit',a:'Paseo por el Retiro y el Mercado de la Paz',n:'Los dos están al lado de casa del hermano'},
+   {t:'13:00',k:'meal',a:'Almuerzo por la zona'},
+   {t:'14:15',k:'drive',a:'Barrio Salamanca → Barajas (25 min)',n:'A mediodía son 25 min; en hora punta se dobla. Por eso no se deja para las 17:00'},
+   {t:'14:45',k:'drive',poi:'madrid',a:'Gasolinera, fotos del estado y devolver la van',n:'Depósito lleno. Fotos de todo el vehículo antes de entregar las llaves'},
+   {t:'15:30',k:'flight',a:'Facturación en la TERMINAL 2, mostradores 401–411',n:'Transavia France opera en T2, no en T1 ni T4. Desde T1 se va andando; si la devolución de la van cae en T4, hay lanzadera de unos 15 min'},
+   {t:'18:30',k:'flight',a:'Vuelo TO 4639 · Madrid → París-Orly',n:'Llegada 20:35. Fuera con maletas sobre las 21:30: no reservar cena en París'}]},
 ];
-const KIC={flight:'✈️',drive:'🚐',visit:'🏛️',beach:'🏖️',meal:'🍽️',rest:'😎',ferry:'⛴️',wine:'🍇'};
-const RESV={0:'🚐 VAN: 9 plazas en BARAJAS, 13 días (2 oct 15:00 → 15 oct 09:00). Pedir la versión LARGA (L2 / Grand): con las tres filas puestas el maletero son ~1.000 L y son 8 maletas contadas, así que el noveno asiento hace de maletero. Kilometraje ILIMITADO (la ruta son ~2.000 km), cobertura total sin franquicia prepagada, diésel lleno→lleno, silla para Elina. Depósito de €1.000–2.500 en tarjeta de CRÉDITO física del conductor. Meter a Peter o Klaus como conductor adicional. Licencia: la ecuatoriana vale en España para un visitante (vigente, edad legal, sin residencia de más de 6 meses) y está en español, así que NO hace falta permiso internacional; solo revisar las condiciones del proveedor concreto, que alguno lo pide por política propia.',
+const KIC={flight:'✈️',drive:'🚐',visit:'🏛️',beach:'🏖️',meal:'🍽️',rest:'😎',ferry:'⛴️',wine:'🍇',hike:'🥾',oil:'🫒'};
+const RESV={0:'🚐 VAN: 9 plazas en BARAJAS. RESERVARLA 2 OCT 15:00 → 15 OCT 15:00, no a las 09:00: son los mismos 13 días facturados y el mismo precio, pero te deja la furgoneta toda la última mañana. Pedir la versión LARGA (L2 / Grand): con las tres filas puestas el maletero son ~1.000 L y son 8 maletas contadas, así que el noveno asiento hace de maletero. Kilometraje ILIMITADO (la ruta son ~2.000 km), cobertura total sin franquicia prepagada, diésel lleno→lleno, silla para Elina. Depósito de €1.000–2.500 en tarjeta de CRÉDITO física del conductor. Meter a Peter o Klaus como conductor adicional. Licencia: la ecuatoriana vale en España para un visitante (vigente, edad legal, sin residencia de más de 6 meses) y está en español, así que NO hace falta permiso internacional; solo revisar las condiciones del proveedor concreto, que alguno lo pide por política propia.',
 1:'🕌 Mezquita-Catedral con hora comprada online. La franja gratuita de 08:30–09:30 (lun–sáb) NO sirve para el grupo: es solo para visitas individuales, máximo 2 personas.',
 2:'🏟️ Itálica cierra los lunes y los domingos solo abre de 9:00 a 15:00. Este domingo es la única ventana del viaje.',
 3:'🕌 Real Alcázar con hora reservada online + tablao de flamenco (Casa de la Memoria se llena).',
-6:'🌿 Dólmenes de Antequera: en jueves abren hasta las 18:00 (en domingo cerrarían a las 15:00). El parking del Torcal se llena a mediodía; si está lleno, lanzadera de 2 € desde el aparcamiento inferior.',
-10:'🇪🇸 12 de octubre, fiesta nacional. Día deliberadamente vacío: todo lo turístico estará a reventar.',
-11:'🕌 LA ALHAMBRA ES LO MÁS URGENTE DEL VIAJE. Solo se vende con 3 meses de antelación, así que las de octubre llevan meses a la venta y los Palacios Nazaríes se agotan. Comprar HOY en tickets.alhambra-patronato.es. Sirven dos ventanas: la tarde del martes 13 o la mañana del miércoles 14. Si no queda nada: el Patronato libera las no recogidas el día anterior, y siempre están la entrada de Jardines+Alcazaba y la visita nocturna.',
-13:'⛽ Devolver la van en Madrid con el depósito lleno y fotos del estado antes de entregarla.'};
+4:'🍇 BODEGA JOAQUÍN FERNÁNDEZ: reservar. 20 €/pers., 90 min, a 3 km de Ronda. Y ojo con los horarios de Ronda: la Plaza de Toros abre 10:00–19:00 en octubre y los Baños Árabes 10:00–18:00 (lun–vie). Por eso los monumentos se ven HOY y no el jueves por la mañana.',
+5:'🥾 Sendero del Majaceite: NO necesita autorización previa, al revés que el Pinsapar, la Garganta Verde o El Torreón. Hoy son dos pueblos y el sendero: los tres pueblos y el sendero no caben.',
+6:'🫒 EL DÍA MÁS CARGADO. Reservar LA Almazara – LA Organic (A-367 km 39,5, abre a las 10:00, 25 €/pers.). Los dólmenes en jueves abren hasta las 18:00. El parking del Torcal se llena a mediodía; si está lleno, lanzadera de 2 € desde abajo. Si vais tarde, se sueltan los dólmenes: el Torcal no se toca.',
+10:'🇪🇸 12 de octubre, fiesta nacional. Todo lo turístico de costa y ciudad estará a reventar: por eso hoy se sube a la montaña. En Capileira puede hacer 10 °C menos que en la playa.',
+11:'🏛️ ALHAMBRA: comprada la entrada de Jardines, Generalife y Alcazaba (~12,73 €/pers.), porque la Visita General con Palacios Nazaríes estaba AGOTADA del 1 al 24 de octubre. Entradas NOMINATIVAS: hay que llevar el pasaporte de cada uno, el mismo que se metió en la compra. Sigue buscando los Nazaríes por dos vías: agencias autorizadas con cupo propio (45–80 €/pers.; si no te piden nombre y pasaporte de los 8, no tienen entradas de verdad) y la web oficial a las 00:00 de Granada, que libera cancelaciones (son las 17:00 del día anterior en Ecuador). Si salen 4 y no 8, cómpralas igual: los Nazaríes entran por turnos de media hora y el grupo se puede partir.',
+13:'✈️ VUELO TO 4639, MADRID → PARÍS-ORLY, 18:30. Facturación en la TERMINAL 2, mostradores 401–411. Transavia es low cost: 20 kg facturados y 10 kg de cabina por persona — con las maletas de la feria encima, pesarlo ANTES y comprar bultos extra online, que en mostrador cuesta el triple. Verificar que los 8 asientos quedaron juntos y que Elina va al lado de un papá. Devolver la van con el depósito lleno y fotos del estado.'};
 
 /* ============ Fotos (Wikimedia Commons, fijas) ============ */
 const U='https://upload.wikimedia.org/wikipedia/commons/thumb/';
