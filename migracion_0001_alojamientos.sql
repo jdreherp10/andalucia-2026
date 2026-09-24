@@ -27,6 +27,9 @@ create index if not exists alojamientos_base_idx on public.alojamientos (base);
 -- La web es pública y sin login (igual que Sicilia): acceso anónimo permisivo.
 alter table public.alojamientos enable row level security;
 
+-- ⚠️  OJO: la política de abajo es la ORIGINAL y deja la tabla abierta a cualquiera.
+--     La migración 0003 la sustituye por políticas que exigen login.
+--     Si vuelves a correr este fichero, corre la 0003 justo después o reabres el agujero.
 drop policy if exists "alojamientos_anon_all" on public.alojamientos;
 create policy "alojamientos_anon_all" on public.alojamientos
   for all to anon using (true) with check (true);

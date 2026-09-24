@@ -21,6 +21,9 @@ create index if not exists gastos_categoria_idx on public.gastos (categoria);
 -- Misma política que alojamientos: web pública y sin login.
 alter table public.gastos enable row level security;
 
+-- ⚠️  OJO: la política de abajo es la ORIGINAL y deja la tabla abierta a cualquiera.
+--     La migración 0003 la sustituye por políticas que exigen login.
+--     Si vuelves a correr este fichero, corre la 0003 justo después o reabres el agujero.
 drop policy if exists "gastos_anon_all" on public.gastos;
 create policy "gastos_anon_all" on public.gastos
   for all to anon using (true) with check (true);

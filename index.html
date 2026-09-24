@@ -209,6 +209,22 @@
   .swipehint{display:none}
   @media(max-width:820px){.swipehint{display:flex;align-items:center;justify-content:center;gap:8px;font-size:11px;color:var(--muted);font-weight:600;padding:2px 0 10px;opacity:.75}}
   /* Gastos */
+  /* ---- Pantalla de login ---- */
+  #authGate{position:fixed;inset:0;z-index:4000;background:var(--bg);display:none;align-items:center;justify-content:center;padding:24px}
+  #authGate.on{display:flex}
+  .agbox{width:100%;max-width:360px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px 20px;box-shadow:0 20px 60px rgba(0,0,0,.55)}
+  .agbox h2{margin:0;font-size:20px;font-weight:800;display:flex;align-items:center;gap:9px}
+  .agbox .agsub{color:var(--muted);font-size:12.5px;margin-top:6px;line-height:1.55}
+  .agbox label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700;margin:15px 0 5px}
+  .agbox input{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px;color:var(--txt);font-size:16px;font-family:inherit}
+  .agbox input:focus{outline:none;border-color:var(--accent)}
+  #agBtn{width:100%;margin-top:17px;border:0;border-radius:11px;padding:14px;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;background:linear-gradient(135deg,var(--accent),#0ea5e9);color:#06263b}
+  #agBtn:disabled{opacity:.55;cursor:default}
+  #agErr{display:none;margin-top:12px;font-size:12px;color:#fda4af;background:rgba(251,113,133,.1);border:1px solid rgba(251,113,133,.32);border-radius:9px;padding:9px 11px;line-height:1.45}
+  #agErr.on{display:block}
+  .agfoot{margin-top:15px;font-size:11.5px;color:var(--muted);line-height:1.55;border-top:1px solid var(--line);padding-top:12px}
+  #agOut{margin-left:auto;background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:4px 9px;font-size:11px;cursor:pointer;font-family:inherit;flex:none}
+  #agOut:hover{border-color:var(--accent);color:var(--txt)}
   .gsummary{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
   .gxcard{position:relative;background:var(--panel2);border:1px solid var(--line);border-left:4px solid var(--c);border-radius:13px;padding:12px 13px;margin-bottom:10px}
   .gxtop{display:flex;align-items:flex-start;gap:10px;padding-right:22px}
@@ -429,7 +445,7 @@
     <div id="sheetHandle"><div class="grab"></div><div class="hint"></div></div>
     <div id="panelHead">
       <div class="brand"><span class="flag">🇪🇸</span>
-        <div><h1>Andalucía 2026</h1><div class="sub">Viaje familiar · 2–15 oct · en van desde Madrid</div></div></div>
+        <div><h1>Andalucía 2026</h1><div class="sub">Viaje familiar · 2–15 oct · en van desde Madrid</div></div><button id="agOut" title="Cerrar sesión">Salir</button></div>
       <div class="stats">
         <span class="stat"><b>13</b> noches</span><span class="stat"><b>6</b> bases</span>
         <span class="stat"><b>8</b> viajeros</span><span class="stat"><b>~16 h</b> de traslados</span></div>
@@ -450,6 +466,19 @@
   <button class="tab" data-view="stay"><span class="ti">🏠</span>Casas</button>
   <button class="tab" data-view="presupuesto"><span class="ti">📊</span>Hospedaje</button>
 </nav>
+<div id="authGate">
+  <div class="agbox">
+    <h2><span>🇪🇸</span> Andalucía 2026</h2>
+    <div class="agsub">Viaje familiar · 2–15 oct. Aquí están las casas, los gastos y los comprobantes del viaje, así que hace falta entrar.</div>
+    <label for="agMail">Correo</label>
+    <input type="email" id="agMail" autocomplete="username" inputmode="email" placeholder="tu@correo.com">
+    <label for="agPass">Clave</label>
+    <input type="password" id="agPass" autocomplete="current-password" placeholder="••••••••">
+    <button id="agBtn">Entrar</button>
+    <div id="agErr"></div>
+    <div class="agfoot">¿No tienes clave? Pídesela a Johan. Se entra <b>una sola vez</b>: el móvil guarda la sesión, así que no hay que repetirlo delante de cada monumento ni hace falta cobertura para que te deje pasar.</div>
+  </div>
+</div>
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -1175,6 +1204,65 @@ const SB_URL='https://pprmiwtbeqsfxznmfcbr.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwcm1pd3RiZXFzZnh6bm1mY2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwOTIzMTYsImV4cCI6MjEwMzY2ODMxNn0.vEWTe04aYOOY9f_Q2pY_S8EztDgKIq1-7n8OyUkQ6pM';
 let sb=null;
 try{ if(window.supabase&&window.supabase.createClient) sb=window.supabase.createClient(SB_URL,SB_KEY); }catch(e){ sb=null; }
+
+/* ============ Login ============
+   Las tablas dejaron de estar abiertas: la migración 0003 exige sesión iniciada.
+   La anon key sigue viajando en el HTML y eso está bien — está pensada para ser
+   pública; lo que ya no hace es abrir nada por sí sola.
+   getSession() lee de localStorage, así que una vez dentro se entra también sin
+   cobertura, que es lo que hace falta en la puerta de un monumento. */
+let sesion=null, datosArrancados=false;
+const gateEl=()=>document.getElementById('authGate');
+function mostrarGate(on){ const g=gateEl(); if(g) g.classList.toggle('on',!!on); const o=document.getElementById('agOut'); if(o) o.style.display=on?'none':''; }
+function gateError(msg){ const e=document.getElementById('agErr'); if(!e)return; e.textContent=msg||''; e.classList.toggle('on',!!msg); }
+function arrancarDatos(){ if(datosArrancados)return; datosArrancados=true; loadFX(); sbLoad(); sbSubscribe(); }
+
+async function initAuth(){
+  /* Sin cliente de Supabase no hay nube que proteger: se trabaja en local y punto. */
+  if(!sb){ mostrarGate(false); arrancarDatos(); return; }
+  try{
+    const r=await sb.auth.getSession();
+    sesion=(r&&r.data&&r.data.session)||null;
+  }catch(e){ sesion=null; }
+  if(sesion){ mostrarGate(false); arrancarDatos(); } else { mostrarGate(true); }
+  try{
+    sb.auth.onAuthStateChange((evt,ses)=>{
+      sesion=ses||null;
+      if(sesion){ mostrarGate(false); arrancarDatos(); renderPanel(); }
+      else { mostrarGate(true); }
+    });
+  }catch(e){}
+}
+
+function bindAuth(){
+  const btn=document.getElementById('agBtn');
+  const mail=document.getElementById('agMail');
+  const pass=document.getElementById('agPass');
+  const entrar=async()=>{
+    const e=(mail.value||'').trim(), p=pass.value||'';
+    if(!e||!p){ gateError('Pon el correo y la clave.'); return; }
+    gateError(''); btn.disabled=true; btn.textContent='Entrando…';
+    try{
+      const {error}=await sb.auth.signInWithPassword({email:e,password:p});
+      if(error){
+        gateError(/invalid login credentials/i.test(error.message)
+          ? 'Correo o clave incorrectos.'
+          : (/email not confirmed/i.test(error.message)
+              ? 'Esa cuenta está sin confirmar. Johan tiene que marcarla como confirmada.'
+              : error.message));
+      }
+    }catch(err){ gateError('No se pudo conectar con el servidor. ¿Tienes internet?'); }
+    btn.disabled=false; btn.textContent='Entrar';
+  };
+  if(btn) btn.onclick=entrar;
+  [mail,pass].forEach(el=>{ if(el) el.addEventListener('keydown',ev=>{ if(ev.key==='Enter') entrar(); }); });
+  const out=document.getElementById('agOut');
+  if(out) out.onclick=async()=>{
+    if(!confirm('¿Cerrar sesión en este dispositivo?'))return;
+    try{ await sb.auth.signOut(); }catch(e){}
+    mostrarGate(true);
+  };
+}
 const numN=v=>(v===null||v===undefined||v==='')?null:Number(v);
 const sToRow=s=>({id:s.id,base:s.base,nombre:s.name||'',url:s.url||'',precio:s.price,habitaciones:numN(s.rooms),banos:numN(s.baths),capacidad:numN(s.cap),parqueo:!!s.parking,rating:numN(s.rating),notas:s.notes||'',foto:s.foto||null,extras:Array.isArray(s.extras)?s.extras:[],reservada:!!s.reservada,invite:s.invite||null});
 const sFromRow=r=>({id:r.id,base:r.base,name:r.nombre||'',url:r.url||'',price:Number(r.precio),rooms:numN(r.habitaciones),baths:numN(r.banos),cap:numN(r.capacidad),parking:r.parqueo!==false,rating:numN(r.rating),notes:r.notas||'',foto:r.foto||null,extras:Array.isArray(r.extras)?r.extras:[],reservada:!!r.reservada,invite:r.invite||null,elegida:!!r.elegida});
@@ -1496,7 +1584,7 @@ function fitAll(){
 }
 drawMap();renderPanel();
 setTimeout(()=>{measureSheet();snapTo('full',true);map.invalidateSize();fitAll();},220);
-loadFX();sbLoad();sbSubscribe();
+bindAuth();initAuth();
 </script>
 </body>
 </html>
