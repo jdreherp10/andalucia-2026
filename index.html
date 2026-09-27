@@ -504,7 +504,7 @@ const BASES = {
   sevilla:{name:'Sevilla',color:'#fb7185',nights:3,lat:37.3891,lng:-5.9845,blurb:'La ciudad grande del viaje: Alcázar, catedral, Triana y las azoteas.',trips:['alcazar','plazaespana','italica']},
   ronda:{name:'Ronda',color:'#4ade80',nights:2,lat:36.7420,lng:-5.1670,blurb:'El Tajo y el Puente Nuevo, con los pueblos blancos de la sierra a media hora.',trips:['setenil','zaharasierra','grazalema','majaceite','bodega']},
   costa:{name:'Costa Tropical',color:'#2dd4bf',nights:5,lat:36.7340,lng:-3.6910,blurb:'Los cinco días de parar. Base en Almuñécar, a 5 min andando de la playa: el pueblo con más vida y más servicios de la Costa Tropical, y el que deja más cerca las calas buenas de Maro-Cerro Gordo.',trips:['herradura','cantarrijan','maro','nerja','frigiliana','salobrena','alpujarras']},
-  granada:{name:'Granada',color:'#a78bfa',nights:1,lat:37.1773,lng:-3.5986,blurb:'La Alhambra y el Albaicín. Una sola noche, pero se llega a mediodía: la costa está a 1 h 10.',trips:['alhambra','albaicin']},
+  granada:{name:'Granada',color:'#a78bfa',nights:1,lat:37.1773,lng:-3.5986,blurb:'La Alhambra y el Albaicín. Una sola noche, pero se llega a mediodía: la costa está a 1 h 10.',trips:['alhambra','nazari','albaicin']},
   madrid:{name:'Madrid · Barajas',color:'#94a3b8',nights:1,lat:40.4936,lng:-3.5668,blurb:'Última noche cerca del aeropuerto: se devuelve la van por la mañana y se vuela a París sin jugársela con 4 h 20 de carretera el mismo día.',trips:[]},
 };
 const ORDER=['cordoba','sevilla','ronda','costa','granada','madrid'];
@@ -533,16 +533,17 @@ const POI = {
   frigiliana:{emoji:'🏘️',name:'Frigiliana',sug:true,lat:36.7940,lng:-3.8940,visit:'2 h',wt:'Frigiliana',wten:'Frigiliana',desc:'Casco morisco de calles empinadas y cal blanquísima, con el mar de fondo. A 15 min de Nerja.'},
   alpujarras:{emoji:'⛰️',name:'Las Alpujarras',sug:true,lat:36.9430,lng:-3.3660,visit:'1 día',wt:'Pampaneira',wten:'Pampaneira',desc:'Pampaneira, Bubión y Capileira colgados del barranco de Poqueira. Excursión opcional desde la costa, para quien quiera montaña.'},
   granada:{emoji:'🏛️',name:'Granada',lat:37.1773,lng:-3.5986,visit:'1 día',wt:'Granada',wten:'Granada',desc:'Catedral y Capilla Real, la Alcaicería y el tapeo del centro.'},
-  alhambra:{emoji:'🕌',name:'La Alhambra',lat:37.1761,lng:-3.5881,visit:'Medio día',wt:'Alhambra',wten:'Alhambra',desc:'Palacios nazaríes, Alcazaba y Generalife. Entrada con hora fija: hay que reservarla con meses.'},
+  alhambra:{emoji:'🕌',name:'La Alhambra · zona libre',lat:37.1761,lng:-3.5881,visit:'2 h',wt:'Alhambra',wten:'Alhambra',desc:'Todo octubre de 2026 se agotó antes de que llegáramos, así que entramos por la parte que NO pide entrada, que es más de lo que parece: el Palacio de Carlos V y su patio circular, el Museo de la Alhambra (gratis, y guarda piezas originales sacadas de los propios Palacios Nazaríes), la Puerta del Vino, la Puerta de la Justicia, la Plaza de los Aljibes con sus vistas al Albaicín y al Sacromonte, los jardines del Convento de San Francisco y los bosques de Gomérez. Lo que queda fuera son los Palacios Nazaríes, la Alcazaba y el Generalife.'},
   bodega:{emoji:'🍇',name:'Bodega Joaquín Fernández',lat:36.7570,lng:-5.1450,visit:'1 h 30',wt:'Ronda',wten:'Ronda',desc:'Bodega ecológica en la finca Los Frutales, a 3 km de Ronda. 20 € por persona: viñedo, bodega, proceso con guía y cata de 4 vinos con ibéricos. Hay que reservar.'},
-  almazara:{emoji:'🫒',name:'LA Almazara – LA Organic',stop:true,lat:36.7600,lng:-5.1100,visit:'1 h 30',wt:'Ronda',wten:'Ronda',desc:'La almazara que diseñó Philippe Starck, en la A-367 km 39,5 (carretera Ronda–Ardales), justo de camino a Antequera. Abre a las 10:00. 25 € por persona: museo, molino, paseo por el olivar ecológico y cata. En octubre la molienda aún no ha empezado: el molino se ve parado.'},
+  almazara:{emoji:'🫒',name:'LA Almazara – LA Organic',stop:true,lat:36.7600,lng:-5.1100,visit:'1 h 30',wt:'Ronda',wten:'Ronda',desc:'La almazara que diseñó Philippe Starck, en la A-367 km 39,5 (carretera Ronda–Ardales), justo de camino a Antequera. Pases a las 10:30, 12:30 y 15:00. 25 € por persona: museo, molino, paseo por el olivar ecológico y cata. En octubre la molienda aún no ha empezado: el molino se ve parado.'},
   salobrena:{emoji:'🏰',name:'Salobreña',lat:36.7440,lng:-3.5870,visit:'Media tarde',wt:'Salobreña',wten:'Salobreña',desc:'Peñón blanco sobre la vega de caña de azúcar, coronado por el castillo árabe mejor conservado de Andalucía. Medina, barrio del Albaicín y miradores. A 25 min de La Herradura.'},
   salamanca:{emoji:'🧳',name:'Barrio Salamanca (Madrid)',stop:true,lat:40.4300,lng:-3.6800,visit:'1 h',wt:'Barrio de Salamanca',wten:'Salamanca (Madrid)',desc:'Casa del hermano de Johan: aquí están guardadas las maletas de la feria. Zona SER entera, difícil de aparcar con una van de 9 plazas. El Retiro y el Mercado de la Paz están al lado.'},
+  nazari:{emoji:'🕌',name:'Circuito nazarí del Albaicín',lat:37.1826,lng:-3.5975,visit:'3 h',wt:'El Bañuelo',wten:'El Bañuelo',desc:'Los cuatro monumentos nazaríes que quedan fuera de la Alhambra, todos a pie y sin cola: el Bañuelo (baños árabes del s. XI, de los mejor conservados de España), la Casa de Zafra, el palacio de Dar al-Horra (s. XV, con la Alhambra enfrente) y el Corral del Carbón (la alhóndiga nazarí, la única que sobrevive). Baratos y casi vacíos.'},
   albaicin:{emoji:'🌇',name:'Albaicín y San Nicolás',lat:37.1810,lng:-3.5928,visit:'2 h',wt:'Albaicín',wten:'Albaicín',desc:'El mirador de San Nicolás al atardecer, con la Alhambra enfrente y Sierra Nevada detrás.'},
 };
 
 const SPINE=[['madrid','cordoba','4 h'],['cordoba','sevilla','1 h 30'],['sevilla','ronda','2 h'],['ronda','antequera','1 h 05'],['antequera','costa','1 h 50'],['costa','granada','1 h 15'],['granada','madrid','4 h 20']];
-const SPURS=[['cordoba','mezquita','5 min'],['sevilla','alcazar','5 min'],['sevilla','plazaespana','10 min'],['sevilla','italica','20 min'],['ronda','setenil','35 min'],['setenil','zaharasierra','45 min'],['zaharasierra','grazalema','30 min'],['grazalema','majaceite','25 min'],['antequera','torcal','25 min'],['antequera','malaga','50 min'],['costa','herradura','12 min'],['costa','cantarrijan','20 min'],['costa','maro','30 min'],['maro','nerja','10 min'],['nerja','frigiliana','15 min'],['costa','alpujarras','1 h 30'],['granada','alhambra','15 min'],['granada','albaicin','15 min'],['ronda','bodega','10 min'],['ronda','almazara','15 min'],['almazara','antequera','1 h'],['costa','salobrena','15 min'],['madrid','salamanca','25 min']];
+const SPURS=[['cordoba','mezquita','5 min'],['sevilla','alcazar','5 min'],['sevilla','plazaespana','10 min'],['sevilla','italica','20 min'],['ronda','setenil','35 min'],['setenil','zaharasierra','45 min'],['zaharasierra','grazalema','30 min'],['grazalema','majaceite','25 min'],['antequera','torcal','25 min'],['antequera','malaga','50 min'],['costa','herradura','12 min'],['costa','cantarrijan','20 min'],['costa','maro','30 min'],['maro','nerja','10 min'],['nerja','frigiliana','15 min'],['costa','alpujarras','1 h 30'],['granada','alhambra','15 min'],['granada','nazari','10 min'],['granada','albaicin','15 min'],['ronda','bodega','10 min'],['ronda','almazara','15 min'],['almazara','antequera','1 h'],['costa','salobrena','15 min'],['madrid','salamanca','25 min']];
 
 /* ============ Agenda ============ */
 const DAYS=[
@@ -568,7 +569,7 @@ const DAYS=[
    {t:'19:00',k:'visit',poi:'sevilla',a:'Triana: mercado, puente y bares'},
    {t:'21:30',k:'meal',a:'Cena en Triana'}]},
  {d:'Lun 5 oct',bs:'Sevilla',c:'#fb7185',load:['y','Lleno'],items:[
-   {t:'09:00',k:'visit',poi:'alcazar',a:'Real Alcázar (entrada con hora)',n:'Se agota: reservar online con antelación'},
+   {t:'09:30',k:'visit',poi:'alcazar',a:'Real Alcázar (entrada con hora)',n:'El primer turno es a las 09:30, no a las 09:00: el Alcázar abre a esa hora todo el año. Se agota, reservar online. Las abuelas pagan 8 € en vez de 15,50'},
    {t:'12:00',k:'visit',poi:'sevilla',a:'Catedral y subida a la Giralda',n:'Se deja para hoy porque en domingo la catedral casi no abre a visitas'},
    {t:'14:00',k:'meal',a:'Almuerzo en Santa Cruz'},
    {t:'16:30',k:'rest',a:'Siesta o azotea con vistas',n:'Si el cuerpo pide algo suave: un paseo en barco por el Guadalquivir es una hora sentados y sin esfuerzo'},
@@ -593,8 +594,8 @@ const DAYS=[
    {t:'17:30',k:'drive',a:'El Bosque → Ronda (1 h)'},
    {t:'21:00',k:'meal',a:'Cena en Ronda'}]},
  {d:'Jue 8 oct',bs:'Aceite, dólmenes y el Torcal',c:'#2dd4bf',load:['r','Intenso'],items:[
-   {t:'09:30',k:'drive',a:'Salida de Ronda por la A-367',n:'El día más cargado del viaje: tres paradas y 3 h de volante. Salir puntual importa'},
-   {t:'10:00',k:'oil',poi:'almazara',a:'LA Almazara – LA Organic',n:'25 € por persona, 1 h 30. Abre a las 10:00, así que entráis los primeros. Museo, molino, paseo por el olivar ecológico y cata. RESERVAR'},
+   {t:'10:00',k:'drive',a:'Salida de Ronda por la A-367',n:'El día más cargado del viaje: tres paradas y 3 h de volante. El primer pase de la almazara es a las 10:30, así que no hace falta madrugar tanto como estaba puesto'},
+   {t:'10:30',k:'oil',poi:'almazara',a:'LA Almazara – LA Organic',n:'25 € por persona, 1 h 30. NO hay pase a las 10:00: los pases son 10:30, 12:30 y 15:00. Museo, molino, paseo por el olivar ecológico y cata. RESERVAR en booking.almazaralaorganic.com'},
    {t:'11:45',k:'drive',a:'Almazara → Antequera (1 h)'},
    {t:'12:45',k:'visit',poi:'antequera',a:'Dólmenes de Menga y Viera',n:'En jueves abren hasta las 18:00. Si vais retrasados, ESTO es lo que se suelta: están a 5 min de la autovía'},
    {t:'13:45',k:'meal',a:'Almuerzo en Antequera'},
@@ -629,16 +630,17 @@ const DAYS=[
    {t:'15:00',k:'visit',poi:'alpujarras',a:'Bubión y Pampaneira, bajando',n:'Entre pueblo y pueblo se va en coche: caminar entre ellos es senderismo de verdad. Pampaneira, el más comercial, para el final'},
    {t:'17:00',k:'drive',a:'Regreso a Almuñécar (1 h 30)'},
    {t:'21:00',k:'meal',a:'Cena de despedida de la costa'}]},
- {d:'Mar 13 oct',bs:'Costa → Granada · Alhambra',c:'#a78bfa',load:['y','Lleno'],items:[
+ {d:'Mar 13 oct',bs:'Costa → Granada · el Albaicín nazarí',c:'#a78bfa',load:['g','Suave'],items:[
    {t:'10:00',k:'drive',a:'Almuñécar → Granada (1 h 15)',n:'El traslado más corto del viaje'},
    {t:'11:30',k:'visit',poi:'granada',a:'Check-in en Granada',n:'Dormir cerca del centro: el Albaicín es ZTL y la van no entra'},
    {t:'12:30',k:'meal',a:'Almuerzo en el Realejo'},
-   {t:'15:00',k:'visit',poi:'alhambra',a:'Alhambra: Generalife, Alcazaba y jardines',n:'ENTRADA COMPRADA: la de Jardines, Generalife y Alcazaba, SIN Palacios Nazaríes, que estaban agotados del 1 al 24 de octubre. Son 2 h 30–3 h. Si aparecen los Nazaríes por agencia o por cancelación, encajan aquí mismo'},
-   {t:'18:30',k:'visit',poi:'albaicin',a:'Mirador de San Nicolás al atardecer',n:'El sol se pone a las 19:41. La Alhambra enfrente, encendida'},
+   {t:'15:00',k:'visit',poi:'nazari',a:'Circuito nazarí del Albaicín',n:'El Bañuelo, la Casa de Zafra, Dar al-Horra y el Corral del Carbón. Todos a pie, baratos y sin cola. No son los Palacios Nazaríes, pero son arquitectura nazarí de verdad y casi nadie los pisa'},
+   {t:'18:30',k:'visit',poi:'albaicin',a:'Mirador de San Nicolás al atardecer',n:'Está en el mismo barrio que el circuito, se llega andando. El sol se pone a las 19:41 y la Alhambra se enciende enfrente'},
    {t:'21:00',k:'meal',a:'Tapeo por calle Navas',n:'En Granada la tapa va incluida con la bebida'}]},
  {d:'Mié 14 oct',bs:'Granada → Madrid',c:'#94a3b8',load:['y','Traslado'],items:[
-   {t:'09:30',k:'visit',poi:'granada',a:'Capilla Real, Catedral y la Alcaicería',n:'Mañana entera y sin prisa: hoy ya no hay nada con hora fija, y mañana el vuelo es a las 18:30'},
-   {t:'13:00',k:'meal',a:'Almuerzo de despedida en Granada'},
+   {t:'09:30',k:'visit',poi:'granada',a:'Capilla Real, Catedral y la Alcaicería',n:'La Capilla Real guarda las tumbas de los Reyes Católicos. Es lo más importante de Granada después de la Alhambra, y esta vez sí hay entradas'},
+   {t:'11:15',k:'visit',poi:'alhambra',a:'Subida libre a la Alhambra',n:'SIN ENTRADA. Se sube por la Cuesta de Gomérez y se entra al recinto: Palacio de Carlos V y su patio circular, el Museo de la Alhambra (gratis, con piezas originales de los propios Palacios Nazaríes), la Puerta del Vino, la Plaza de los Aljibes y los bosques. Quedan fuera los Nazaríes, la Alcazaba y el Generalife'},
+   {t:'13:15',k:'meal',a:'Almuerzo de despedida en Granada'},
    {t:'15:00',k:'drive',a:'Granada → Madrid (4 h 20)',n:'Parar en Despeñaperros a estirar; se llega de noche'},
    {t:'20:15',k:'visit',poi:'madrid',a:'Check-in junto a Barajas',n:'Junto al aeropuerto, no en el centro: mañana hay que devolver la van y volar'},
    {t:'21:00',k:'meal',a:'Cena de cierre del viaje'}]},
@@ -662,7 +664,7 @@ const RESV={0:'🚐 VAN: 9 plazas en BARAJAS. RESERVARLA 2 OCT 15:00 → 15 OCT 
 5:'🥾 Sendero del Majaceite: NO necesita autorización previa, al revés que el Pinsapar, la Garganta Verde o El Torreón. Hoy son dos pueblos y el sendero: los tres pueblos y el sendero no caben.',
 6:'🫒 EL DÍA MÁS CARGADO. Reservar LA Almazara – LA Organic (A-367 km 39,5, abre a las 10:00, 25 €/pers.). Los dólmenes en jueves abren hasta las 18:00. El parking del Torcal se llena a mediodía; si está lleno, lanzadera de 2 € desde abajo. Si vais tarde, se sueltan los dólmenes: el Torcal no se toca.',
 10:'🇪🇸 12 de octubre, fiesta nacional. Todo lo turístico de costa y ciudad estará a reventar: por eso hoy se sube a la montaña. En Capileira puede hacer 10 °C menos que en la playa.',
-11:'🏛️ ALHAMBRA: comprada la entrada de Jardines, Generalife y Alcazaba (~12,73 €/pers.), porque la Visita General con Palacios Nazaríes estaba AGOTADA del 1 al 24 de octubre. Entradas NOMINATIVAS: hay que llevar el pasaporte de cada uno, el mismo que se metió en la compra. Sigue buscando los Nazaríes por dos vías: agencias autorizadas con cupo propio (45–80 €/pers.; si no te piden nombre y pasaporte de los 8, no tienen entradas de verdad) y la web oficial a las 00:00 de Granada, que libera cancelaciones (son las 17:00 del día anterior en Ecuador). Si salen 4 y no 8, cómpralas igual: los Nazaríes entran por turnos de media hora y el grupo se puede partir.',
+11:'🏛️ SIN ALHAMBRA. Todo octubre de 2026 se agotó: la Visita General, la de Jardines/Generalife/Alcazaba, la Dobla de Oro, la nocturna y la Granada Card, que tiene cupo propio. Se comprobó producto por producto y fecha por fecha. LO QUE SÍ SE HACE: el martes, el circuito nazarí del Albaicín (Bañuelo, Casa de Zafra, Dar al-Horra, Corral del Carbón) y San Nicolás al atardecer; el miércoles, la Capilla Real y la subida LIBRE al recinto de la Alhambra, que no pide entrada y da el Palacio de Carlos V, el Museo de la Alhambra con piezas originales de los Nazaríes, la Puerta del Vino, la Plaza de los Aljibes y los bosques. ÚLTIMO CARTUCHO, por si acaso: la web oficial libera cancelaciones a las 00:00 hora de Granada, que son las 17:00 del día anterior en Ecuador. Mirar los días 10, 11 y 12. Si salen 4 y no 8, comprar igual: se entra por turnos de media hora y el grupo se puede partir. Y si no, no pasa nada: Granada es mucho más que eso.',
 13:'✈️ VUELO TO 4639, MADRID → PARÍS-ORLY, 18:30. Facturación en la TERMINAL 2, mostradores 401–411. Transavia es low cost: 20 kg facturados y 10 kg de cabina por persona — con las maletas de la feria encima, pesarlo ANTES y comprar bultos extra online, que en mostrador cuesta el triple. Verificar que los 8 asientos quedaron juntos y que Elina va al lado de un papá. Devolver la van con el depósito lleno y fotos del estado.'};
 
 /* ============ Fotos (Wikimedia Commons, fijas) ============ */
